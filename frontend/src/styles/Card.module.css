@@ -1,0 +1,16 @@
+.cardHeader {
+  background-color: rgb(199, 199, 199) !important;
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  border-color: rgb(0, 0, 0);
+}
+
+.cardBody,
+.cardBody * {
+  background-color: rgb(105, 105, 105) !important;
+  color: #ffffff !important;
+  border: 0;
+}

@@ -38,8 +38,11 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.IsAuthenticated",
+    # ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ],
 }
 
@@ -59,7 +62,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "api",  # the first app that we created
     "rest_framework",
-    "corsheaders"
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
