@@ -29,10 +29,112 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
     queryset = ProjectTask.objects.all()
     serializer_class = ProjectTaskSerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        for param, value in self.request.query_params.items():
+            if param in ["project", "task", "quantity"] and value is not None:
+                queryset = queryset.filter(**{param: value})
+        return queryset
+
+    def create(self, request):
+        project_id = request.data.get("project")
+        task_id = request.data.get("task")
+        quantity = request.data.get("quantity")
+
+        project_task, created = ProjectTask.objects.update_or_create(
+            project_id=project_id,
+            task_id=task_id,
+            defaults={"quantity": quantity},
+        )
+
+        serializer = self.get_serializer(project_task)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(serializer.data, status=status_code)
+
+    def update(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, "_prefetched_objects_cache", None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def delete(self, request):
+        project_id = request.query_params.get("project")
+        task_id = request.query_params.get("task")
+        print(project_id)
+        print(task_id)
+
+        # Filter and delete all matching TaskMaterial entries
+        project_tasks = ProjectTask.objects.filter(
+            project_id=project_id, task_id=task_id
+        )
+        if project_tasks.exists():
+            project_tasks.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found."}
+            )
+
 
 class ProjectMaterialViewSet(viewsets.ModelViewSet):
     queryset = ProjectMaterial.objects.all()
     serializer_class = ProjectMaterialSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        for param, value in self.request.query_params.items():
+            if param in ["project", "material", "quantity"] and value is not None:
+                queryset = queryset.filter(**{param: value})
+        return queryset
+
+    def create(self, request):
+        project_id = request.data.get("project")
+        material_id = request.data.get("material")
+        quantity = request.data.get("quantity")
+
+        project_material, created = ProjectMaterial.objects.update_or_create(
+            project_id=project_id,
+            material_id=material_id,
+            defaults={"quantity": quantity},
+        )
+
+        serializer = self.get_serializer(project_material)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(serializer.data, status=status_code)
+
+    def update(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, "_prefetched_objects_cache", None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def delete(self, request):
+        project_id = request.query_params.get("project")
+        material_id = request.query_params.get("material")
+        print(project_id)
+        print(material_id)
+
+        # Filter and delete all matching TaskMaterial entries
+        project_materials = ProjectMaterial.objects.filter(
+            project_id=project_id, material_id=material_id
+        )
+        if project_materials.exists():
+            project_materials.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found."}
+            )
 
 
 class TaskMaterialViewSet(viewsets.ModelViewSet):
@@ -70,10 +172,90 @@ class TaskMaterialViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    def delete(self, request):
+        task_id = request.query_params.get("task")
+        material_id = request.query_params.get("material")
+        print(task_id)
+        print(material_id)
+
+        # Filter and delete all matching TaskMaterial entries
+        task_materials = TaskMaterial.objects.filter(
+            task_id=task_id, material_id=material_id
+        )
+        if task_materials.exists():
+            task_materials.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found."}
+            )
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    # permission_classes = [IsAuthenticated]  # Require authentication
+
+    def create(self, request, *args, **kwargs):
+        print("*** Create method is being called ***")
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED, headers=headers
+            )
+        else:
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        print("*** Performing create ***")
+        print(f"user is {self.request.user} and type is {type(self.request.user)}")
+        serializer.save(creator=self.request.user)
+
+    def retrieve(self, request, pk=None):
+        project = self.get_object()
+        creator_name = f"{project.creator.first_name} {project.creator.last_name}"
+        data = {
+            "project": ProjectSerializer(project).data,
+            "materials": [],
+            "tasks": [],
+        }
+        data["project"]["creator"] = creator_name
+
+        return Response(data)
+
+    def retrieve(self, request, pk=None):
+        project = self.get_object()
+        creator_name = f"{project.creator.first_name} {project.creator.last_name}"
+        project_tasks = ProjectTask.objects.filter(project=project)
+        project_materials = ProjectMaterial.objects.filter(project=project)
+
+        tasks_with_quantity = [
+            {
+                **TaskSerializer(task.task).data,
+                "quantity": task.quantity,
+            }
+            for task in project_tasks
+        ]
+
+        materials_with_quantity = [
+            {
+                **MaterialSerializer(material.material).data,
+                "quantity": material.quantity,
+            }
+            for material in project_materials
+        ]
+
+        data = {
+            "project": ProjectSerializer(project).data,
+            "tasks": tasks_with_quantity,
+            "materials": materials_with_quantity,
+        }
+        data["project"]["creator"] = creator_name
+
+        return Response(data)
 
 
 class TaskViewSet(viewsets.ModelViewSet):

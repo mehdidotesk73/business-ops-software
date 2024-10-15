@@ -1,13 +1,16 @@
 import { useState } from "react";
-import api from "../api";
+import api from "../../api";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN, LOGIN_STATUS } from "../constants";
-import "../styles/Form.css";
-import LoadingIndicator from "./LoadingIndicator";
+import { ACCESS_TOKEN, REFRESH_TOKEN, LOGIN_STATUS } from "../../constants";
+import "../../styles/Form.css";
+import LoadingIndicator from "../LoadingIndicator";
 
 function UserForm({ route, method }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -18,7 +21,13 @@ function UserForm({ route, method }) {
     e.preventDefault();
 
     try {
-      const res = await api.post(route, { username, password });
+      const res = await api.post(route, {
+        username: username,
+        password: password,
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+      });
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
@@ -51,6 +60,32 @@ function UserForm({ route, method }) {
         onChange={(e) => setPassword(e.target.value)}
         placeholder='Password'
       />
+      {method === "register" ? (
+        <>
+          <input
+            className='form-input'
+            type='text'
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder='First Name'
+          />
+          <input
+            className='form-input'
+            type='text'
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder='Last Name'
+          />
+          <input
+            className='form-input'
+            type='text'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder='Email address'
+          />
+        </>
+      ) : null}
+
       {loading && <LoadingIndicator />}
       <button className='form-button' type='submit'>
         {name}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { keysToCamelCase } from "../components/caseConverters";
 import ModifyModal from "../components/modals/ModifyModal";
@@ -6,6 +7,7 @@ import ElementTable from "../components/tabulars/ElementTable";
 
 function MaterialsPage() {
   const [materials, setMaterials] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getMaterials();
@@ -77,6 +79,7 @@ function MaterialsPage() {
             elements={materials}
             onDelete={deleteMaterial}
             onModify={updateMaterial}
+            onInspect={(element) => navigate(`/materials/${element.id}`)}
             withActions={true}
           />
         )}

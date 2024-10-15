@@ -1,44 +1,20 @@
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import {
-  DetailedMaterialView,
-  DetailedTaskView,
-  DetailedProjectView,
-} from "../cards/DetailedElementViews";
-import { capitalizeFirstLetters } from "../caseConverters";
+import { useState } from "react";
+import AddProjectMaterial from "../forms/AddProjectMaterial";
 
-function ViewModal({ type, element }) {
+function ProjectMaterialModal({ projectId, onAdd }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
-
-  switch (type) {
-    case "material":
-    case "taskMaterial":
-      type = "material";
-      break;
-    case "task":
-    case "projectTask":
-      type = "task";
-      break;
-    case "project":
-      type = "project";
-      break;
-  }
-
   const handleClose = () => setShowModal(false);
-
-  let purpose = "View " + type;
-  purpose = capitalizeFirstLetters(purpose);
 
   const modal = (
     <>
       <button
         type='button'
-        className='btn btn-info btn-sm'
+        className='btn btn-success btn-sm'
         onClick={handleShow}
       >
-        View
+        Add/Change Materials
       </button>
 
       {showModal && (
@@ -46,7 +22,7 @@ function ViewModal({ type, element }) {
           <div className='modal-dialog' role='document'>
             <div className='modal-content'>
               <div className='modal-header d-flex justify-content-between align-items-center'>
-                <h5 className='modal-title'>{purpose}</h5>
+                <h5 className='modal-title'>Add/Change Materials</h5>
                 <button
                   type='button'
                   className='close'
@@ -57,13 +33,7 @@ function ViewModal({ type, element }) {
                 </button>
               </div>
               <div className='modal-body'>
-                {type === "material" ? (
-                  <DetailedMaterialView id={element.id} />
-                ) : type === "task" ? (
-                  <DetailedTaskView id={element.id} />
-                ) : type === "project" ? (
-                  <DetailedProjectView id={element.id} />
-                ) : null}
+                <AddProjectMaterial projectId={projectId} onAdd={onAdd} />
               </div>
               <div className='modal-footer'>
                 <button
@@ -84,4 +54,4 @@ function ViewModal({ type, element }) {
   return modal;
 }
 
-export default ViewModal;
+export default ProjectMaterialModal;

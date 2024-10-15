@@ -8,8 +8,7 @@
   border-color: rgb(0, 0, 0);
 }
 
-.cardBody,
-.cardBody * {
+.cardBody {
   background-color: rgb(105, 105, 105) !important;
   color: #ffffff !important;
   border: 0;

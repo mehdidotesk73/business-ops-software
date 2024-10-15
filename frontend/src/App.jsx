@@ -8,8 +8,12 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MaterialsPage from "./pages/Materials";
 import TasksPage from "./pages/Tasks";
-
-import DetailedView from "./components/DetailedTaskView";
+import ProjectsPage from "./pages/Projects";
+import {
+  DetailedMaterialView,
+  DetailedTaskView,
+  DetailedProjectView,
+} from "./components/cards/DetailedElementViews";
 
 function Logout() {
   localStorage.clear();
@@ -50,6 +54,39 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path='/projects'
+            element={
+              <ProtectedRoute>
+                <ProjectsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/materials/:id'
+            element={
+              <ProtectedRoute>
+                <DetailedMaterialView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/tasks/:id'
+            element={
+              <ProtectedRoute>
+                <DetailedTaskView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/projects/:id'
+            element={
+              <ProtectedRoute>
+                <DetailedProjectView />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path='/login' element={<Login />} />
           <Route path='/logout' element={<Logout />} />
@@ -61,7 +98,7 @@ function App() {
             path='/test'
             element={
               <ProtectedRoute>
-                <DetailedView id={6} />
+                <DetailedTaskView />
               </ProtectedRoute>
             }
           />

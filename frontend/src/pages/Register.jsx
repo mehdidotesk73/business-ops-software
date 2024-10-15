@@ -1,4 +1,4 @@
-import UserForm from "../components/UserForm";
+import UserForm from "../components/forms/UserForm";
 
 function Register() {
   return <UserForm route='/api/user/register/' method='register' />;

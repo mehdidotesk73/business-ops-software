@@ -15,8 +15,24 @@ class Note(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    labor_hours = models.FloatField()
+    client_name = models.CharField(max_length=50)
+    site_location = models.CharField(max_length=200)
+    zipcode = models.CharField(max_length=5)
     description = models.CharField(max_length=500)
+    contingency = models.FloatField(default=0)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    creator = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="projects_created"
+    )
+    coordinator = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="projects_coordinating",
+        null=True,
+        blank=True,
+    )
+
     tasks = models.ManyToManyField("Task", through="ProjectTask")
     materials = models.ManyToManyField("Material", through="ProjectMaterial")
 

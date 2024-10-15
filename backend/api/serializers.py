@@ -20,9 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "first_name",
             "last_name",
-            "email_address",
-            "phone",
-            "roles",
+            "email",
         ]
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -51,9 +49,12 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    creator = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Project
         fields = "__all__"
+        extra_kwargs = {"creator": {"read_only": True}}
 
 
 class TaskMaterialSerializer(serializers.ModelSerializer):
@@ -64,7 +65,7 @@ class TaskMaterialSerializer(serializers.ModelSerializer):
 
 class ProjectTaskSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProjectMaterial
+        model = ProjectTask
         fields = ["project", "task", "quantity"]
 
 

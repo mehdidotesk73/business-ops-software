@@ -1,5 +1,4 @@
 import React from "react";
-import { elementDisplayFields } from "../ElementDisplaySettings";
 import styles from "../../styles/Card.module.css";
 
 function TableViewCard({ title, table }) {
@@ -14,8 +13,8 @@ function TableViewCard({ title, table }) {
   cardBody = <div className={styles.cardBody}>{table}</div>;
 
   const card = (
-    <div className='col'>
-      <div className='card border-white mb-1 '>
+    <div className='col' styles={styles.cardBody}>
+      <div className='card border-white mb-1 ' styles={styles.cardBody}>
         {cardHeader}
         {cardBody}
       </div>

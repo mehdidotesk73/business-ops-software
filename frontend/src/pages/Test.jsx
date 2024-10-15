@@ -1,3 +1,3 @@
-import DetailedView from "../components/DetailedTaskView";
+import DetailedTaskView from "../components/cards/DetailedTaskView";
 
-return DetailedView(6);
+return DetailedTaskView(6);

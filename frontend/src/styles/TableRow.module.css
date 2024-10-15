@@ -1,8 +1,13 @@
-.rowObjects {
+.tableHeader {
+  background-color: rgb(48, 48, 48) !important;
+  color: #ececec !important;
+}
+
+.tableRow {
   background-color: rgb(126, 126, 126) !important;
 }
 
-.rowPlainText {
+.tableTextRow {
   background-color: rgb(126, 126, 126) !important;
   color: #ececec !important;
 }

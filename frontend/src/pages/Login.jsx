@@ -1,4 +1,4 @@
-import UserForm from "../components/UserForm";
+import UserForm from "../components/forms/UserForm";
 
 function Login() {
   return <UserForm route='/api/token/' method='login' />;

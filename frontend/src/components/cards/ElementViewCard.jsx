@@ -22,10 +22,11 @@ function ElementViewCard({ type, element }) {
     data = fields[key]["as"] + ": " + data;
 
     const tag = fields[key]["tag"] || "p"; // Default to <p> if no tag is specified
+    const style = fields[key]["place"] === "header" ? null : styles.cardBody; // Keep default style for header
     const className = fields[key]["className"] || ""; // Default to <p> if no tag is specified
     const cardElement = React.createElement(
       tag,
-      { key, className: className },
+      { key, className: `${className} ${style}` },
       data
     );
 
@@ -40,7 +41,9 @@ function ElementViewCard({ type, element }) {
   cardHeader = <div className={styles.cardHeader}>{headerElements}</div>;
   cardBody = (
     <div className={styles.cardBody}>
-      <ul className='list-group list-group-flush'>{bodyElements}</ul>
+      <ul className={`list-group list-group-flush ${styles.cardBody}`}>
+        {bodyElements}
+      </ul>
     </div>
   );
 

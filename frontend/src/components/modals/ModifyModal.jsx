@@ -9,8 +9,6 @@ function ModifyModal({ onSubmit, method, type, element = null }) {
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
-  const id = element ? element.id : null;
-
   const handleSubmit = (formData) => {
     switch (type) {
       case "material":
@@ -20,9 +18,10 @@ function ModifyModal({ onSubmit, method, type, element = null }) {
         onSubmit(formData);
         break;
       case "project":
+        onSubmit(formData);
         break;
     }
-    handleClose();
+    // handleClose();
   };
 
   const modalForm = (
@@ -49,7 +48,7 @@ function ModifyModal({ onSubmit, method, type, element = null }) {
       showButton = (
         <button
           type='button'
-          className='btn btn-light btn-sm'
+          className='btn btn-outline-light btn-sm'
           onClick={handleShow}
         >
           Modify
