@@ -13,6 +13,14 @@ class Note(models.Model):
         return self.title
 
 
+# User Profiles
+# class Employee(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
+#     phone_number = models.CharField(max_length=255)
+
+
+# Project Management Models
 class Project(models.Model):
     name = models.CharField(max_length=200, unique=True)
     client_name = models.CharField(max_length=50)

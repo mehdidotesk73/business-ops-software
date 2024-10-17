@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api";
 import ElementViewCard from "./ElementViewCard";
@@ -8,6 +8,7 @@ import { keysToCamelCase } from "../caseConverters";
 import TaskMaterialModal from "../modals/TaskMaterialModal";
 import ProjectMaterialModal from "../modals/ProjectMaterialModal";
 import ProjectTaskModal from "../modals/ProjectTaskModal";
+import ViewModal from "../modals/ViewModal";
 
 export function DetailedMaterialView({ id: propId }) {
   const { id: paramId } = useParams();
@@ -77,6 +78,20 @@ export function DetailedTaskView({ id: propId }) {
 
   if (loading) return <p>Loading...</p>;
 
+  const viewMaterialModal = cloneElement(
+    <ViewModal type='material' buttonClassName='btn btn-info btn-sm' />,
+    { element: null }
+  );
+
+  const materialActions = [
+    { label: "View", action: viewMaterialModal },
+    {
+      label: "Delete",
+      action: deleteTaskMaterial,
+      buttonClassName: "btn btn-danger btn-sm",
+    },
+  ];
+
   return taskInfo ? (
     <>
       <ElementViewCard type='task' element={taskInfo.task}></ElementViewCard>
@@ -84,10 +99,10 @@ export function DetailedTaskView({ id: propId }) {
         title='Materials list'
         table={
           <ElementTable
-            type='taskMaterial'
+            tableKey='taskMaterial'
             elements={taskInfo.materials}
+            actions={materialActions}
             withActions={true}
-            onDelete={deleteTaskMaterial}
           ></ElementTable>
         }
       ></TableViewCard>
@@ -148,7 +163,35 @@ export function DetailedProjectView({ id: propId }) {
 
   if (loading) {
     return <p>Loading...</p>;
-  } else console.log(projectInfo);
+  }
+
+  const viewTaskModal = cloneElement(
+    <ViewModal type='task' buttonClassName='btn btn-info btn-sm' />,
+    { element: null }
+  );
+
+  const taskActions = [
+    { label: "View", action: viewTaskModal },
+    {
+      label: "Delete",
+      action: deleteProjectTask,
+      buttonClassName: "btn btn-danger btn-sm",
+    },
+  ];
+
+  const viewMaterialModal = cloneElement(
+    <ViewModal type='material' buttonClassName='btn btn-info btn-sm' />,
+    { element: null }
+  );
+
+  const materialActions = [
+    { label: "View", action: viewMaterialModal },
+    {
+      label: "Delete",
+      action: deleteProjectMaterial,
+      buttonClassName: "btn btn-danger btn-sm",
+    },
+  ];
 
   return projectInfo ? (
     <>
@@ -160,10 +203,9 @@ export function DetailedProjectView({ id: propId }) {
         title='Tasks list'
         table={
           <ElementTable
-            type='projectTask'
+            tableKey='projectTask'
             elements={projectInfo.tasks}
-            withActions={true}
-            onDelete={deleteProjectTask}
+            actions={taskActions}
           ></ElementTable>
         }
       ></TableViewCard>
@@ -173,10 +215,9 @@ export function DetailedProjectView({ id: propId }) {
         title='Materials list'
         table={
           <ElementTable
-            type='projectMaterial'
+            tableKey='projectMaterial'
             elements={projectInfo.materials}
-            withActions={true}
-            onDelete={deleteProjectMaterial}
+            actions={materialActions}
           ></ElementTable>
         }
       ></TableViewCard>

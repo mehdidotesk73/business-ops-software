@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, viewsets
+from rest_framework.views import APIView
 from .serializers import (
     UserSerializer,
     NoteSerializer,
@@ -23,6 +25,65 @@ from .models import (
     ProjectTask,
     ProjectMaterial,
 )
+
+
+class AnalyzeProject(APIView):
+    def post(self, request, project_id):
+        project = get_object_or_404(Project, id=project_id)
+        coordinator = get_object_or_404(User, id=project.coordinator)
+        zipcode = project.zipcode
+
+        if number1 is None or number2 is None:
+            return Response(
+                {"error": "Both numbers are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            number1 = float(number1)
+            number2 = float(number2)
+        except ValueError:
+            return Response(
+                {"error": "Invalid numbers"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        result = {
+            "addition": number1 + number2,
+            "subtraction": number1 - number2,
+            "multiplication": number1 * number2,
+            "division": number1 / number2 if number2 != 0 else "undefined",
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class MathOperationsView(APIView):
+    def post(self, request):
+        number1 = request.data.get("number1")
+        number2 = request.data.get("number2")
+
+        if number1 is None or number2 is None:
+            return Response(
+                {"error": "Both numbers are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            number1 = float(number1)
+            number2 = float(number2)
+        except ValueError:
+            return Response(
+                {"error": "Invalid numbers"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        result = {
+            "addition": number1 + number2,
+            "subtraction": number1 - number2,
+            "multiplication": number1 * number2,
+            "division": number1 / number2 if number2 != 0 else "undefined",
+        }
+
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class ProjectTaskViewSet(viewsets.ModelViewSet):

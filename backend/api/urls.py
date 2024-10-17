@@ -29,4 +29,7 @@ urlpatterns = [
     path("", include(router_task_materials.urls)),
     path("", include(router_project_tasks.urls)),
     path("", include(router_project_materials.urls)),
+    path(
+        "math-operations/", views.MathOperationsView.as_view(), name="math_operations"
+    ),
 ]

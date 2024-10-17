@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { keysToCamelCase } from "../components/caseConverters";
 import ViewModal from "../components/modals/ViewModal";
 import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
-import { DetailedTaskView } from "../components/cards/DetailedElementViews";
 
 function TasksPage() {
   const [tasks, setTasks] = useState([]);
@@ -66,21 +65,56 @@ function TasksPage() {
       .catch((error) => alert(error));
   };
 
+  const inspectTask = (element) => {
+    navigate(`/tasks/${element.id}`);
+  };
+
+  const viewModal = cloneElement(
+    <ViewModal type='task' buttonClassName='btn btn-info btn-sm' />,
+    { element: null }
+  );
+  const modifyModal = cloneElement(
+    <ModifyModal
+      onSubmit={updateTask}
+      method='edit'
+      type='task'
+      buttonClassName='btn btn-outline-light btn-sm'
+    />,
+    { element: null }
+  );
+
+  const actions = [
+    { label: "View", action: viewModal },
+    { label: "Modify", action: modifyModal },
+    {
+      label: "Inspect",
+      action: inspectTask,
+      buttonClassName: "btn btn-outline-light btn-sm",
+    },
+    {
+      label: "Delete",
+      action: deleteTask,
+      buttonClassName: "btn btn-danger btn-sm",
+    },
+  ];
+
   return (
     <div>
       <div>
         <h2>Tasks</h2>
         <div>
-          <ModifyModal onSubmit={createTask} method='add' type='task' />
+          <ModifyModal
+            onSubmit={createTask}
+            method='add'
+            type='task'
+            buttonClassName='btn btn-success btn-sm'
+          />
         </div>
         {tasks.length > 0 && (
           <ElementTable
-            type='task'
+            tableKey='task'
             elements={tasks}
-            onDelete={deleteTask}
-            onModify={updateTask}
-            onInspect={(element) => navigate(`/tasks/${element.id}`)}
-            withActions={true}
+            actions={actions}
           ></ElementTable>
         )}
       </div>

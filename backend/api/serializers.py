@@ -49,7 +49,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    creator = serializers.PrimaryKeyRelatedField(read_only=True)
+    creator = UserSerializer(read_only=True)
+    coordinator = UserSerializer(read_only=True)
 
     class Meta:
         model = Project

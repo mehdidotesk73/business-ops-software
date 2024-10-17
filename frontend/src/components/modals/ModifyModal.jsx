@@ -3,7 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import DynamicForm from "../forms/DynamicForm";
 import { capitalizeFirstLetters } from "../caseConverters";
 
-function ModifyModal({ onSubmit, method, type, element = null }) {
+function ModifyModal({
+  onSubmit,
+  method,
+  type,
+  element = null,
+  buttonClassName = "btn btn-light btn-sm",
+}) {
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
@@ -34,11 +40,7 @@ function ModifyModal({ onSubmit, method, type, element = null }) {
     case "add":
       purpose = "Add " + type;
       showButton = (
-        <button
-          type='button'
-          className='btn btn-success btn-sm'
-          onClick={handleShow}
-        >
+        <button type='button' className={buttonClassName} onClick={handleShow}>
           {capitalizeFirstLetters("New " + type)}
         </button>
       );
@@ -46,11 +48,7 @@ function ModifyModal({ onSubmit, method, type, element = null }) {
     case "edit":
       purpose = "Edit " + type;
       showButton = (
-        <button
-          type='button'
-          className='btn btn-outline-light btn-sm'
-          onClick={handleShow}
-        >
+        <button type='button' className={buttonClassName} onClick={handleShow}>
           Modify
         </button>
       );

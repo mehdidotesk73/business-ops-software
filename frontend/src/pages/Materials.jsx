@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { keysToCamelCase } from "../components/caseConverters";
+import ViewModal from "../components/modals/ViewModal";
 import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
 
@@ -66,21 +67,58 @@ function MaterialsPage() {
       .catch((error) => alert(error));
   };
 
+  const inspectMaterial = (element) => {
+    navigate(`/materials/${element.id}`);
+  };
+
+  const viewModal = cloneElement(
+    <ViewModal type='material' buttonClassName='btn btn-info btn-sm' />,
+    {
+      element: null,
+    }
+  );
+  const modifyModal = cloneElement(
+    <ModifyModal
+      onSubmit={updateMaterial}
+      method='edit'
+      type='material'
+      buttonClassName='btn btn-outline-light btn-sm'
+    />,
+    { element: null }
+  );
+
+  const actions = [
+    { label: "View", action: viewModal },
+    { label: "Modify", action: modifyModal },
+    {
+      label: "Inspect",
+      action: inspectMaterial,
+      buttonClassName: "btn btn-outline-light btn-sm",
+    },
+    {
+      label: "Delete",
+      action: deleteMaterial,
+      buttonClassName: "btn btn-danger btn-sm",
+    },
+  ];
+
   return (
     <div>
       <div>
         <h2>Materials</h2>
         <div>
-          <ModifyModal onSubmit={createMaterial} method='add' type='material' />
+          <ModifyModal
+            onSubmit={createMaterial}
+            method='add'
+            type='material'
+            buttonClassName='btn btn-success btn-sm'
+          />
         </div>
         {materials.length > 0 && (
           <ElementTable
-            type='material'
+            tableKey='material'
             elements={materials}
-            onDelete={deleteMaterial}
-            onModify={updateMaterial}
-            onInspect={(element) => navigate(`/materials/${element.id}`)}
-            withActions={true}
+            actions={actions}
           />
         )}
       </div>

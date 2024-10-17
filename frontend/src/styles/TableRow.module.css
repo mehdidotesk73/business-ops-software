@@ -11,3 +11,8 @@
   background-color: rgb(126, 126, 126) !important;
   color: #ececec !important;
 }
+
+.buttonContainer {
+  display: inline-block !important;
+  margin: 2px !important;
+}

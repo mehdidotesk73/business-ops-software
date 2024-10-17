@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, cloneElement } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { keysToCamelCase } from "../components/caseConverters";
 import ViewModal from "../components/modals/ViewModal";
 import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
-import { DetailedTaskView } from "../components/cards/DetailedElementViews";
 
 function ProjectsPage() {
   const [projects, setProjects] = useState([]);
@@ -19,7 +18,18 @@ function ProjectsPage() {
     try {
       const res = await api.get("/api/projects/");
       const camelCaseData = keysToCamelCase(res.data);
-      setProjects(camelCaseData);
+      let updatedData = camelCaseData.map((project) => ({
+        ...project,
+        creatorName: `${project.creator.firstName} ${project.creator.lastName}`,
+      }));
+      updatedData = updatedData.map((project) => ({
+        ...project,
+        coordinatorName: project.coordinator
+          ? `${project.coordinator.firstName} ${project.coordinator.lastName}`
+          : null,
+      }));
+      setProjects(updatedData);
+      console.log(updatedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -72,21 +82,73 @@ function ProjectsPage() {
       .catch((error) => alert(error));
   };
 
+  const inspectProject = (element) => {
+    navigate(`/projects/${element.id}`);
+  };
+
+  const assignProject = (element) => {};
+
+  const runProjectReport = (element) => {};
+
+  const viewModal = cloneElement(
+    <ViewModal type='project' buttonClassName='btn btn-info btn-sm' />,
+    {
+      element: null,
+    }
+  );
+  const modifyModal = cloneElement(
+    <ModifyModal
+      onSubmit={updateProject}
+      method='edit'
+      type='project'
+      buttonClassName='btn btn-outline-light btn-sm'
+    />,
+    { element: null }
+  );
+
+  const actions = [
+    { label: "View", action: viewModal },
+    { label: "Modify", action: modifyModal },
+    {
+      label: "Inspect",
+      action: inspectProject,
+      buttonClassName: "btn btn-outline-light btn-sm",
+    },
+
+    {
+      label: "Delete",
+      action: deleteProject,
+      buttonClassName: "btn btn-danger btn-sm",
+    },
+    {
+      label: "Assign",
+      action: assignProject,
+      buttonClassName: "btn btn-success btn-sm",
+    },
+    {
+      label: "Report",
+      action: runProjectReport,
+      buttonClassName: "btn btn-success btn-sm",
+    },
+  ];
+
   return (
     <div>
       <div>
         <h2>Projects</h2>
         <div>
-          <ModifyModal onSubmit={createProject} method='add' type='project' />
+          <ModifyModal
+            onSubmit={createProject}
+            method='add'
+            type='project'
+            buttonClassName='btn btn-success btn-sm'
+          />
         </div>
         {projects.length > 0 && (
           <ElementTable
-            type='project'
+            tableKey='project'
             elements={projects}
-            onDelete={deleteProject}
-            onModify={updateProject}
-            onInspect={(element) => navigate(`/projects/${element.id}`)}
-            withActions={true}
+            actions={actions}
           ></ElementTable>
         )}
       </div>

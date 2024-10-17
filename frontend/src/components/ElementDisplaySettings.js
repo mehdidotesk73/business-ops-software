@@ -76,7 +76,8 @@ export const elementDisplayFields = {
       zipcode: { as: "Zipcode" },
       description: { as: "Description" },
       createdAt: { as: "Date Created", map: dateMapper },
-      creator: { as: "Creator" },
+      creatorName: { as: "Creator" },
+      coordinatorName: { as: "Coordinator" },
     },
     card: {
       name: { as: "Name", place: "header", tag: "h5", className: "card-title" },
