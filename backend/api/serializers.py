@@ -86,7 +86,16 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def get_materials(self, instance):
         # Serialize materials
-        return MaterialSerializer(instance.materials.all(), many=True).data
+        material_instances = TaskMaterial.objects.filter(task=instance)
+        materials = []
+        # Loop over them and perform actions
+        for material_instance in material_instances:
+            material = MaterialSerializer(
+                material_instance.material, context=self.context
+            ).data
+            material["quantity"] = material_instance.quantity
+            materials.append(material)
+        return materials
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -112,15 +121,27 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def get_tasks(self, instance):
         # Serialize tasks
-        return TaskSerializer(
-            instance.tasks.all(), many=True, context=self.context
-        ).data
+        task_instances = ProjectTask.objects.filter(project=instance)
+        tasks = []
+        # Loop over them and perform actions
+        for task_instance in task_instances:
+            task = TaskSerializer(task_instance.task, context=self.context).data
+            task["quantity"] = task_instance.quantity
+            tasks.append(task)
+        return tasks
 
     def get_materials(self, instance):
         # Serialize materials
-        return MaterialSerializer(
-            instance.materials.all(), many=True, context=self.context
-        ).data
+        material_instances = ProjectMaterial.objects.filter(project=instance)
+        materials = []
+        # Loop over them and perform actions
+        for material_instance in material_instances:
+            material = MaterialSerializer(
+                material_instance.material, context=self.context
+            ).data
+            material["quantity"] = material_instance.quantity
+            materials.append(material)
+        return materials
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -140,16 +161,58 @@ class ProjectSerializer(serializers.ModelSerializer):
 class TaskMaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskMaterial
-        fields = ["task", "material", "quantity"]
+        fields = "__all__"
+
+    def get_material(self, instance):
+        # Serialize material
+        return MaterialSerializer(instance.material, context=self.context).data
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get("request", None)
+
+        if request and request.parser_context["kwargs"].get("pk"):
+            print(self.get_material(instance))
+            representation["material"] = self.get_material(instance)
+
+        return representation
 
 
 class ProjectTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectTask
-        fields = ["project", "task", "quantity"]
+        fields = "__all__"
+
+    def get_task(self, instance):
+        # Serialize material
+        return TaskSerializer(instance.task, context=self.context).data
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get("request", None)
+
+        if request and request.parser_context["kwargs"].get("pk"):
+            print(self.get_task(instance))
+            representation["task"] = self.get_task(instance)
+
+        return representation
 
 
 class ProjectMaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectMaterial
-        fields = ["project", "material", "quantity"]
+        fields = "__all__"
+
+    def get_material(self, instance):
+        # Serialize material
+        return MaterialSerializer(instance.material, context=self.context).data
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get("request", None)
+
+        if request and request.parser_context["kwargs"].get("pk"):
+            print(self.get_material(instance))
+            representation["material"] = self.get_material(instance)
+
+        return representation

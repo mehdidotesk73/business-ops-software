@@ -71,12 +71,9 @@ function MaterialsPage() {
     navigate(`/materials/${element.id}`);
   };
 
-  const viewModal = cloneElement(
-    <ViewModal type='material' buttonClassName='btn btn-info btn-sm' />,
-    {
-      element: null,
-    }
-  );
+  const viewModal = cloneElement(<ViewModal type='material' />, {
+    element: null,
+  });
   const modifyModal = cloneElement(
     <ModifyModal
       onSubmit={updateMaterial}

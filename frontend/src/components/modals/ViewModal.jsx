@@ -12,7 +12,7 @@ function ViewModal({
   type,
   element,
   label = "View",
-  buttonClassName = "btn btn-light btn-sm",
+  buttonClassName = "btn btn-info btn-sm",
 }) {
   const [showModal, setShowModal] = useState(false);
 

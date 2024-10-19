@@ -29,22 +29,6 @@ class ClientProfile(models.Model):
     phone_number = models.CharField(max_length=255)
 
 
-# User Profiles
-# class Employee(models.Model):
-#     user = models.OneToOneField(
-#         User, on_delete=models.CASCADE, related_name="employee_role"
-#     )
-#     hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
-#     phone_number = models.CharField(max_length=255)
-
-
-# class Client(models.Model):
-#     user = models.OneToOneField(
-#         User, on_delete=models.CASCADE, related_name="client_role"
-#     )
-#     phone_number = models.CharField(max_length=255)
-
-
 # Project Management Models
 class Project(models.Model):
     name = models.CharField(max_length=200, unique=True)
@@ -103,7 +87,7 @@ class ProjectTask(models.Model):
     quantity = models.FloatField()
 
     def __str__(self):
-        return f"{self.task.name} - {self.material.name} ({self.quantity})"
+        return f"{self.project.name} - {self.task.name} ({self.quantity})"
 
 
 class ProjectMaterial(models.Model):
@@ -116,7 +100,7 @@ class ProjectMaterial(models.Model):
     quantity = models.FloatField()
 
     def __str__(self):
-        return f"{self.task.name} - {self.material.name} ({self.quantity})"
+        return f"{self.project.name} - {self.material.name} ({self.quantity})"
 
 
 class TaskMaterial(models.Model):

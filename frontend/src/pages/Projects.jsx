@@ -87,12 +87,9 @@ function ProjectsPage() {
 
   const runProjectReport = (element) => {};
 
-  const viewModal = cloneElement(
-    <ViewModal type='project' buttonClassName='btn btn-info btn-sm' />,
-    {
-      element: null,
-    }
-  );
+  const viewModal = cloneElement(<ViewModal type='project' />, {
+    element: null,
+  });
   const modifyModal = cloneElement(
     <ModifyModal
       onSubmit={updateProject}

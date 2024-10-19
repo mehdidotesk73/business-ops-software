@@ -5,6 +5,8 @@ import styles from "../../styles/TableRow.module.css";
 function ElementTable({ tableKey = "table", elements, actions = null }) {
   // Get the row-display-settings for element type to be displayed
   const fields = elementDisplayFields[tableKey]?.row || {};
+  // console.log(fields);
+  // console.log(elements);
   // Construct row for each element
   function row(element) {
     return (
@@ -15,15 +17,9 @@ function ElementTable({ tableKey = "table", elements, actions = null }) {
           if (fields[key].prefix) data = fields[key].prefix + data;
           if (fields[key].suffix) data = data + fields[key].suffix;
 
-          return (
-            // <td key={`${element.id}-${key}`} className={styles.tableTextRow}>
-            //   {data}
-            // </td>
-            <td key={`${element.id}-${key}`}>{data}</td>
-          );
+          return <td key={`${element.id}-${key}`}>{data}</td>;
         })}
         {actions && (
-          // <td key={`${element.id}-actions`} className={`${styles.tableRow}`}>
           <td key={`${element.id}-actions`}>
             {actions.map((action, index) => (
               <React.Fragment key={`${element.id}-${index}`}>
@@ -59,15 +55,11 @@ function ElementTable({ tableKey = "table", elements, actions = null }) {
       <thead key={`${tableKey}-thead`}>
         <tr key={`${tableKey}-thead-row`}>
           {Object.keys(fields).map((key) => (
-            <th key={`${tableKey}-${key}`} className={styles.tableHeader}>
+            <th key={`${tableKey}-${key}`} className={"table-primary"}>
               {fields[key].as}
             </th>
-            // <th key={`${tableKey}-${key}`} className={"table-primary"}>
-            //   {fields[key].as}
-            // </th>
           ))}
-          {actions && <th className={styles.tableHeader}>Actions</th>}
-          {/* {actions && <th className={"table-primary"}>Actions</th>} */}
+          {actions && <th className={"table-primary"}>Actions</th>}
         </tr>
       </thead>
       <tbody key={`${tableKey}-tbody`}>

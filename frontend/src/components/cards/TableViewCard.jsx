@@ -10,11 +10,11 @@ function TableViewCard({ title, table }) {
       <h5>{title}</h5>
     </div>
   );
-  cardBody = <div className={styles.cardBody}>{table}</div>;
+  cardBody = <div>{table}</div>;
 
   const card = (
     <div className='col' styles={styles.cardBody}>
-      <div className='card border-white mb-1 ' styles={styles.cardBody}>
+      <div className='card bg-light text-black border-white mb-1 '>
         {cardHeader}
         {cardBody}
       </div>

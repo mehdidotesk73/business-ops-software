@@ -1,12 +1,14 @@
 import { useState } from "react";
-import AddTaskMaterial from "../forms/AddTaskMaterial";
+import AddParentChildren from "../forms/AddParentChildren";
+import { capitalizeFirstLetters } from "../caseConverters";
 
-function TaskMaterialModal({ taskId, onAdd }) {
+function ParentChildModal({ parentType, parentId, childType, taskId, onAdd }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
+  const purpose = capitalizeFirstLetters(`add/change ${childType}s`);
   const modal = (
     <>
       <button
@@ -14,7 +16,7 @@ function TaskMaterialModal({ taskId, onAdd }) {
         className='btn btn-success btn-sm'
         onClick={handleShow}
       >
-        Add/Change Materials
+        {purpose}
       </button>
 
       {showModal && (
@@ -22,7 +24,7 @@ function TaskMaterialModal({ taskId, onAdd }) {
           <div className='modal-dialog' role='document'>
             <div className='modal-content'>
               <div className='modal-header d-flex justify-content-between align-items-center'>
-                <h5 className='modal-title'>Add/Change Materials</h5>
+                <h5 className='modal-title'>{purpose}</h5>
                 <button
                   type='button'
                   className='close'
@@ -33,7 +35,14 @@ function TaskMaterialModal({ taskId, onAdd }) {
                 </button>
               </div>
               <div className='modal-body'>
-                <AddTaskMaterial taskId={taskId} onAdd={onAdd} />
+                <AddParentChildren
+                  parentType={parentType}
+                  parentId={parentId}
+                  childType={childType}
+                  onAdd={onAdd}
+                />
+
+                {/* <AddTaskMaterial taskId={taskId} onAdd={onAdd} /> */}
               </div>
               <div className='modal-footer'>
                 <button
@@ -54,4 +63,4 @@ function TaskMaterialModal({ taskId, onAdd }) {
   return modal;
 }
 
-export default TaskMaterialModal;
+export default ParentChildModal;

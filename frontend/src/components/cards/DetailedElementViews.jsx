@@ -5,11 +5,9 @@ import ElementViewCard from "./ElementViewCard";
 import TableViewCard from "./TableViewCard";
 import ElementTable from "../tabulars/ElementTable";
 import { keysToCamelCase } from "../caseConverters";
-import TaskMaterialModal from "../modals/TaskMaterialModal";
-import ProjectMaterialModal from "../modals/ProjectMaterialModal";
-import ProjectTaskModal from "../modals/ProjectTaskModal";
 import ViewModal from "../modals/ViewModal";
 import ProfileModal from "../modals/ProfileModal";
+import ParentChildModal from "../modals/ParentChildModal";
 
 export function DetailedMaterialView({ id: propId }) {
   const { id: paramId } = useParams();
@@ -107,7 +105,12 @@ export function DetailedTaskView({ id: propId }) {
           ></ElementTable>
         }
       ></TableViewCard>
-      <TaskMaterialModal taskId={taskInfo.id} onAdd={getTask} />
+      <ParentChildModal
+        parentType={"task"}
+        parentId={taskInfo.id}
+        childType={"material"}
+        onAdd={getTask}
+      />
     </>
   ) : null;
 }
@@ -166,7 +169,7 @@ export function DetailedProjectView({ id: propId }) {
 
   if (loading) {
     return <p>Loading...</p>;
-  }
+  } else console.log(projectInfo);
 
   const viewTaskModal = cloneElement(
     <ViewModal type='task' buttonClassName='btn btn-info btn-sm' />,
@@ -209,7 +212,12 @@ export function DetailedProjectView({ id: propId }) {
           ></ElementTable>
         }
       ></TableViewCard>
-      <ProjectTaskModal projectId={projectInfo.id} onAdd={getProject} />
+      <ParentChildModal
+        parentType={"project"}
+        parentId={projectInfo.id}
+        childType={"task"}
+        onAdd={getProject}
+      />
 
       <TableViewCard
         title='Materials list'
@@ -221,7 +229,12 @@ export function DetailedProjectView({ id: propId }) {
           ></ElementTable>
         }
       ></TableViewCard>
-      <ProjectMaterialModal projectId={projectInfo.id} onAdd={getProject} />
+      <ParentChildModal
+        parentType={"project"}
+        parentId={projectInfo.id}
+        childType={"material"}
+        onAdd={getProject}
+      />
     </>
   ) : null;
 }

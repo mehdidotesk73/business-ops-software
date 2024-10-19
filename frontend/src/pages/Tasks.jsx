@@ -69,10 +69,7 @@ function TasksPage() {
     navigate(`/tasks/${element.id}`);
   };
 
-  const viewModal = cloneElement(
-    <ViewModal type='task' buttonClassName='btn btn-info btn-sm' />,
-    { element: null }
-  );
+  const viewModal = cloneElement(<ViewModal type='task' />, { element: null });
   const modifyModal = cloneElement(
     <ModifyModal
       onSubmit={updateTask}
