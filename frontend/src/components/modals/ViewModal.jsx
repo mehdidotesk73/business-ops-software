@@ -4,33 +4,30 @@ import {
   DetailedMaterialView,
   DetailedTaskView,
   DetailedProjectView,
+  DetailedUserView,
 } from "../cards/DetailedElementViews";
 import { capitalizeFirstLetters } from "../caseConverters";
 
 function ViewModal({
   type,
   element,
+  label = "View",
   buttonClassName = "btn btn-light btn-sm",
 }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);
-
-  switch (type) {
-    case "material":
-    case "taskMaterial":
-      type = "material";
-      break;
-    case "task":
-    case "projectTask":
-      type = "task";
-      break;
-    case "project":
-      type = "project";
-      break;
-  }
-
   const handleClose = () => setShowModal(false);
+
+  const typeMap = {
+    material: "material",
+    taskMaterial: "material",
+    task: "task",
+    projectTask: "task",
+    project: "project",
+    user: "user",
+  };
+  type = typeMap[type];
 
   let purpose = "View " + type;
   purpose = capitalizeFirstLetters(purpose);
@@ -38,7 +35,7 @@ function ViewModal({
   const modal = (
     <>
       <button type='button' className={buttonClassName} onClick={handleShow}>
-        View
+        {label}
       </button>
 
       {showModal && (
@@ -63,6 +60,8 @@ function ViewModal({
                   <DetailedTaskView id={element.id} />
                 ) : type === "project" ? (
                   <DetailedProjectView id={element.id} />
+                ) : type === "user" ? (
+                  <DetailedUserView id={element.id} />
                 ) : null}
               </div>
               <div className='modal-footer'>

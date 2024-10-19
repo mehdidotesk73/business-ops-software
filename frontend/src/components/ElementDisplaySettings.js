@@ -11,6 +11,35 @@ const dollarMapper = (data) => {
 const hourMapper = (data) => {
   return data + " hrs";
 };
+const hourlyRateMapper = (data) => {
+  return data + " $/hr";
+};
+const phoneNumberMapper = (data) => {
+  let formattedData;
+  if (data.length === 10) {
+    formattedData =
+      data.substring(0, 3) +
+      "-" +
+      data.substring(3, 6) +
+      "-" +
+      data.substring(data.length - 4);
+  } else if (data.length > 10) {
+    const code = data.substring(0, data.length - 10);
+    const lastTen = data.substring(data.length - 10);
+    formattedData =
+      "(" +
+      code +
+      ")" +
+      lastTen.substring(0, 3) +
+      "-" +
+      lastTen.substring(3, 6) +
+      "-" +
+      lastTen.substring(data.length - 4);
+  } else {
+    formattedData = data;
+  }
+  return formattedData;
+};
 
 export const elementDisplayFields = {
   material: {
@@ -30,10 +59,10 @@ export const elementDisplayFields = {
       },
       unitPrice: {
         as: "Unit Price",
-        prefix: "$ ",
         place: "body",
         tag: "li",
         className: "list-group-item",
+        map: dollarMapper,
       },
       description: {
         as: "Description",
@@ -105,13 +134,13 @@ export const elementDisplayFields = {
         tag: "li",
         className: "list-group-item",
       },
-      creator: {
+      creatorName: {
         as: "Creator",
         place: "body",
         tag: "li",
         className: "list-group-item",
       },
-      coordinator: {
+      coordinatorName: {
         as: "Coordinator",
         place: "body",
         tag: "li",
@@ -128,7 +157,7 @@ export const elementDisplayFields = {
   taskMaterial: {
     row: {
       name: { as: "Material" },
-      unitPrice: { as: "Unit Price" },
+      unitPrice: { as: "Unit Price", map: dollarMapper },
       quantity: { as: "Quantity" },
     },
   },
@@ -136,7 +165,7 @@ export const elementDisplayFields = {
   projectMaterial: {
     row: {
       name: { as: "Material" },
-      unitPrice: { as: "Unit Price" },
+      unitPrice: { as: "Unit Price", map: dollarMapper },
       quantity: { as: "Quantity" },
     },
   },
@@ -144,8 +173,87 @@ export const elementDisplayFields = {
   projectTask: {
     row: {
       name: { as: "Task" },
-      laborHours: { as: "Labor Hours" },
+      laborHours: { as: "Labor Hours", map: hourMapper },
       quantity: { as: "Quantity" },
+    },
+  },
+
+  user: {
+    row: {
+      firstName: { as: "First Name" },
+      lastName: { as: "Last Name" },
+      username: { as: "Username" },
+      email: { as: "Email" },
+    },
+    card: {
+      name: {
+        as: "Name",
+        place: "header",
+        tag: "h5",
+        className: "card-title",
+      },
+      username: {
+        as: "Username",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      email: {
+        as: "Email",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+    },
+  },
+
+  employee: {
+    row: {
+      hourlyRate: { as: "Hourly Rate", map: hourlyRateMapper },
+      phoneNumber: { as: "Phone Number", map: phoneNumberMapper },
+    },
+    card: {
+      name: {
+        as: "",
+        place: "header",
+        tag: "h5",
+        className: "card-title",
+      },
+      hourlyRate: {
+        as: "Hourly Rate",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: hourlyRateMapper,
+      },
+      phoneNumber: {
+        as: "Phone Number",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: phoneNumberMapper,
+      },
+    },
+  },
+
+  client: {
+    row: {
+      phoneNumber: { as: "Phone Number", map: phoneNumberMapper },
+    },
+    card: {
+      name: {
+        as: "",
+        place: "header",
+        tag: "h5",
+        className: "card-title",
+      },
+      phoneNumber: {
+        as: "Phone Number",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: phoneNumberMapper,
+      },
     },
   },
 };

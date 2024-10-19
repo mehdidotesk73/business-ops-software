@@ -20,16 +20,13 @@ function ProjectsPage() {
       const camelCaseData = keysToCamelCase(res.data);
       let updatedData = camelCaseData.map((project) => ({
         ...project,
-        creatorName: `${project.creator.firstName} ${project.creator.lastName}`,
+        creatorName: project.creator.name,
       }));
       updatedData = updatedData.map((project) => ({
         ...project,
-        coordinatorName: project.coordinator
-          ? `${project.coordinator.firstName} ${project.coordinator.lastName}`
-          : null,
+        coordinatorName: project.coordinator.name,
       }));
       setProjects(updatedData);
-      console.log(updatedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -101,7 +98,7 @@ function ProjectsPage() {
       onSubmit={updateProject}
       method='edit'
       type='project'
-      buttonClassName='btn btn-outline-light btn-sm'
+      buttonClassName='btn btn-outline-dark btn-sm'
     />,
     { element: null }
   );
@@ -112,7 +109,7 @@ function ProjectsPage() {
     {
       label: "Inspect",
       action: inspectProject,
-      buttonClassName: "btn btn-outline-light btn-sm",
+      buttonClassName: "btn btn-outline-dark btn-sm",
     },
 
     {

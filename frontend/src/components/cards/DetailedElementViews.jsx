@@ -9,6 +9,7 @@ import TaskMaterialModal from "../modals/TaskMaterialModal";
 import ProjectMaterialModal from "../modals/ProjectMaterialModal";
 import ProjectTaskModal from "../modals/ProjectTaskModal";
 import ViewModal from "../modals/ViewModal";
+import ProfileModal from "../modals/ProfileModal";
 
 export function DetailedMaterialView({ id: propId }) {
   const { id: paramId } = useParams();
@@ -94,7 +95,7 @@ export function DetailedTaskView({ id: propId }) {
 
   return taskInfo ? (
     <>
-      <ElementViewCard type='task' element={taskInfo.task}></ElementViewCard>
+      <ElementViewCard type='task' element={taskInfo}></ElementViewCard>
       <TableViewCard
         title='Materials list'
         table={
@@ -106,7 +107,7 @@ export function DetailedTaskView({ id: propId }) {
           ></ElementTable>
         }
       ></TableViewCard>
-      <TaskMaterialModal taskId={taskInfo.task.id} onAdd={getTask} />
+      <TaskMaterialModal taskId={taskInfo.id} onAdd={getTask} />
     </>
   ) : null;
 }
@@ -125,6 +126,8 @@ export function DetailedProjectView({ id: propId }) {
     try {
       const res = await api.get(`/api/projects/${id}/`);
       const camelCaseData = keysToCamelCase(res.data);
+      camelCaseData.creatorName = camelCaseData.creator.name;
+      camelCaseData.coordinatorName = camelCaseData.coordinator.name;
       setProjectInfo(camelCaseData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -195,10 +198,7 @@ export function DetailedProjectView({ id: propId }) {
 
   return projectInfo ? (
     <>
-      <ElementViewCard
-        type='project'
-        element={projectInfo.project}
-      ></ElementViewCard>
+      <ElementViewCard type='project' element={projectInfo}></ElementViewCard>
       <TableViewCard
         title='Tasks list'
         table={
@@ -209,7 +209,7 @@ export function DetailedProjectView({ id: propId }) {
           ></ElementTable>
         }
       ></TableViewCard>
-      <ProjectTaskModal projectId={projectInfo.project.id} onAdd={getProject} />
+      <ProjectTaskModal projectId={projectInfo.id} onAdd={getProject} />
 
       <TableViewCard
         title='Materials list'
@@ -221,10 +221,63 @@ export function DetailedProjectView({ id: propId }) {
           ></ElementTable>
         }
       ></TableViewCard>
-      <ProjectMaterialModal
-        projectId={projectInfo.project.id}
-        onAdd={getProject}
+      <ProjectMaterialModal projectId={projectInfo.id} onAdd={getProject} />
+    </>
+  ) : null;
+}
+
+export function DetailedUserView({ id: propId }) {
+  const { id: paramId } = useParams();
+  const id = propId || paramId; // Use propId if passed, otherwise use paramId
+  const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const getUser = async () => {
+    try {
+      const res = await api.get(`/api/users/${id}/`);
+      const camelCaseData = keysToCamelCase(res.data);
+      setUserInfo(camelCaseData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  const handleProfileAdd = () => {
+    setLoading(true);
+    getUser();
+  };
+
+  return userInfo ? (
+    <>
+      <ElementViewCard type='user' element={userInfo}></ElementViewCard>
+      <ProfileModal element={userInfo} method='add' onAdd={handleProfileAdd} />
+      <ProfileModal
+        element={userInfo}
+        method='delete'
+        onAdd={handleProfileAdd}
       />
+      {userInfo.employeeProfile ? (
+        <ElementViewCard
+          type='employee'
+          element={userInfo.employeeProfile}
+        ></ElementViewCard>
+      ) : null}
+      {userInfo.clientProfile ? (
+        <ElementViewCard
+          type='client'
+          element={userInfo.clientProfile}
+        ></ElementViewCard>
+      ) : null}
     </>
   ) : null;
 }

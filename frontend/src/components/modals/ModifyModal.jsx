@@ -8,7 +8,7 @@ function ModifyModal({
   method,
   type,
   element = null,
-  buttonClassName = "btn btn-light btn-sm",
+  buttonClassName = "btn btn-dark btn-sm",
 }) {
   const [showModal, setShowModal] = useState(false);
 

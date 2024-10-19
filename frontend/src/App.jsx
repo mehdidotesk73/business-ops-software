@@ -9,10 +9,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import MaterialsPage from "./pages/Materials";
 import TasksPage from "./pages/Tasks";
 import ProjectsPage from "./pages/Projects";
+import UsersPage from "./pages/Users";
 import {
   DetailedMaterialView,
   DetailedTaskView,
   DetailedProjectView,
+  DetailedUserView,
 } from "./components/cards/DetailedElementViews";
 
 function Logout() {
@@ -88,20 +90,20 @@ function App() {
             }
           />
 
+          <Route
+            path='/users'
+            element={
+              <ProtectedRoute>
+                <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path='/login' element={<Login />} />
           <Route path='/logout' element={<Logout />} />
           <Route path='/register' element={<RegisterAndLogout />} />
 
           <Route path='*' element={<NotFound />}></Route>
-
-          <Route
-            path='/test'
-            element={
-              <ProtectedRoute>
-                <DetailedTaskView />
-              </ProtectedRoute>
-            }
-          />
         </Routes>
       </Layout>
     </BrowserRouter>

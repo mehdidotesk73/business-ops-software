@@ -20,6 +20,15 @@ router_project_tasks.register(r"project-tasks", views.ProjectTaskViewSet)
 router_project_materials = DefaultRouter()
 router_project_materials.register(r"project-materials", views.ProjectMaterialViewSet)
 
+router_users = DefaultRouter()
+router_users.register(r"users", views.UserViewSet)
+
+router_employees = DefaultRouter()
+router_employees.register(r"employees", views.EmployeeProfileViewSet)
+
+router_clients = DefaultRouter()
+router_clients.register(r"clients", views.ClientProfileViewSet)
+
 urlpatterns = [
     path("notes/", views.NoteListCreate.as_view(), name="note-list"),
     path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
@@ -29,6 +38,9 @@ urlpatterns = [
     path("", include(router_task_materials.urls)),
     path("", include(router_project_tasks.urls)),
     path("", include(router_project_materials.urls)),
+    path("", include(router_users.urls)),
+    path("", include(router_employees.urls)),
+    path("", include(router_clients.urls)),
     path(
         "math-operations/", views.MathOperationsView.as_view(), name="math_operations"
     ),

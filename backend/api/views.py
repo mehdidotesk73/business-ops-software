@@ -2,10 +2,13 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, viewsets
+from rest_framework.decorators import action
 from rest_framework.views import APIView
 from .serializers import (
     UserSerializer,
     NoteSerializer,
+    EmployeeProfileSerializer,
+    ClientProfileSerializer,
     MaterialSerializer,
     TaskSerializer,
     ProjectSerializer,
@@ -18,6 +21,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import (
     Note,
+    EmployeeProfile,
+    ClientProfile,
     Material,
     Task,
     Project,
@@ -25,6 +30,8 @@ from .models import (
     ProjectTask,
     ProjectMaterial,
 )
+from rest_framework import viewsets
+from django.contrib.auth.models import User
 
 
 class AnalyzeProject(APIView):
@@ -84,6 +91,147 @@ class MathOperationsView(APIView):
         }
 
         return Response(result, status=status.HTTP_200_OK)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        return Response(
+            "Users must be created through registeration.",
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class EmployeeProfileViewSet(viewsets.ModelViewSet):
+    queryset = EmployeeProfile.objects.all()
+    serializer_class = EmployeeProfileSerializer
+
+    def create(self, request):
+        user_id = request.data.get("user")
+        hourly_rate = request.data.get("hourly_rate")
+        phone_number = request.data.get("phone_number")
+
+        # Fetch the user instance
+        user = User.objects.get(pk=user_id)
+
+        employee_profile, created = EmployeeProfile.objects.update_or_create(
+            user=user,
+            defaults={"hourly_rate": hourly_rate, "phone_number": phone_number},
+        )
+
+        serializer = self.get_serializer(employee_profile)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(serializer.data, status=status_code)
+
+    def update(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, "_prefetched_objects_cache", None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def delete(self, request):
+        user = request.query_params.get("user")
+        employee_profile = EmployeeProfile.objects.filter(user=user)
+        if employee_profile.exists():
+            employee_profile.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found."}
+            )
+
+    @action(detail=False, methods=["get", "delete"], url_path="by-user")
+    def manage_by_user(self, request):
+        user_id = request.query_params.get("user_id")
+        if not user_id:
+            return Response(
+                {"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Fetch the user instance
+        user = User.objects.get(pk=user_id)
+        employee_profile = EmployeeProfile.objects.filter(user=user).first()
+
+        if employee_profile:
+            if request.method == "GET":
+                serializer = self.get_serializer(employee_profile)
+                return Response(serializer.data)
+            if request.method == "DELETE":
+                employee_profile.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ClientProfileViewSet(viewsets.ModelViewSet):
+    queryset = ClientProfile.objects.all()
+    serializer_class = ClientProfileSerializer
+
+    def create(self, request):
+        user_id = request.data.get("user")
+        phone_number = request.data.get("phone_number")
+
+        # Fetch the user instance
+        user = User.objects.get(pk=user_id)
+
+        client_profile, created = ClientProfile.objects.update_or_create(
+            user=user, defaults={"phone_number": phone_number}
+        )
+
+        serializer = self.get_serializer(client_profile)
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(serializer.data, status=status_code)
+
+    def update(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, "_prefetched_objects_cache", None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def delete(self, request):
+        user = request.query_params.get("user")
+        client_profile = ClientProfile.objects.filter(user=user)
+        if client_profile.exists():
+            client_profile.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found."}
+            )
+
+    @action(detail=False, methods=["get", "delete"], url_path="by-user")
+    def manage_by_user(self, request):
+        user_id = request.query_params.get("user_id")
+        if not user_id:
+            return Response(
+                {"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Fetch the user instance
+        user = User.objects.get(pk=user_id)
+        client_profile = ClientProfile.objects.filter(user=user).first()
+
+        if client_profile:
+            if request.method == "GET":
+                serializer = self.get_serializer(client_profile)
+                return Response(serializer.data)
+            if request.method == "DELETE":
+                client_profile.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ProjectTaskViewSet(viewsets.ModelViewSet):
@@ -258,7 +406,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]  # Require authentication
 
     def create(self, request, *args, **kwargs):
-        print("*** Create method is being called ***")
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             self.perform_create(serializer)
@@ -271,73 +418,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
-        print("*** Performing create ***")
-        print(f"user is {self.request.user} and type is {type(self.request.user)}")
         serializer.save(creator=self.request.user)
-
-    def retrieve(self, request, pk=None):
-        project = self.get_object()
-        creator_name = f"{project.creator.first_name} {project.creator.last_name}"
-        data = {
-            "project": ProjectSerializer(project).data,
-            "materials": [],
-            "tasks": [],
-        }
-        data["project"]["creator"] = creator_name
-
-        return Response(data)
-
-    def retrieve(self, request, pk=None):
-        project = self.get_object()
-        creator_name = f"{project.creator.first_name} {project.creator.last_name}"
-        project_tasks = ProjectTask.objects.filter(project=project)
-        project_materials = ProjectMaterial.objects.filter(project=project)
-
-        tasks_with_quantity = [
-            {
-                **TaskSerializer(task.task).data,
-                "quantity": task.quantity,
-            }
-            for task in project_tasks
-        ]
-
-        materials_with_quantity = [
-            {
-                **MaterialSerializer(material.material).data,
-                "quantity": material.quantity,
-            }
-            for material in project_materials
-        ]
-
-        data = {
-            "project": ProjectSerializer(project).data,
-            "tasks": tasks_with_quantity,
-            "materials": materials_with_quantity,
-        }
-        data["project"]["creator"] = creator_name
-
-        return Response(data)
 
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-
-    def retrieve(self, request, pk=None):
-        task = self.get_object()
-        task_materials = TaskMaterial.objects.filter(task=task)
-
-        materials_with_quantity = [
-            {
-                **MaterialSerializer(material.material).data,
-                "quantity": material.quantity,
-            }
-            for material in task_materials
-        ]
-
-        data = {"task": TaskSerializer(task).data, "materials": materials_with_quantity}
-
-        return Response(data)
 
 
 class MaterialViewSet(viewsets.ModelViewSet):

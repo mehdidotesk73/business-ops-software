@@ -21,41 +21,45 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
   const fields = settings[type];
 
   return (
-    <form onSubmit={handleSubmit}>
-      {Object.keys(fields).map((key) => {
-        const { label, type } = fields[key];
-        return (
-          <div key={key} className='form-group row align-items-center'>
-            <label htmlFor={key} className='col col-form-label'>
-              {label + ":"}
-            </label>
-            <div className='col'>
-              {type === "textarea" ? (
-                <textarea
-                  className='form-control'
-                  id={key}
-                  name={key}
-                  required
-                  onChange={handleChange}
-                  value={formData[key] || ""}
-                />
-              ) : (
-                <input
-                  className='form-control'
-                  type={type}
-                  id={key}
-                  name={key}
-                  required
-                  onChange={handleChange}
-                  value={formData[key] || ""}
-                />
-              )}
-            </div>
-          </div>
-        );
-      })}
-      <input type='submit' value='Submit' />
-    </form>
+    <>
+      {type ? (
+        <form onSubmit={handleSubmit}>
+          {Object.keys(fields).map((key) => {
+            const { label, type } = fields[key];
+            return (
+              <div key={key} className='form-group row align-items-center'>
+                <label htmlFor={key} className='col col-form-label'>
+                  {label + ":"}
+                </label>
+                <div className='col'>
+                  {type === "textarea" ? (
+                    <textarea
+                      className='form-control'
+                      id={key}
+                      name={key}
+                      required
+                      onChange={handleChange}
+                      value={formData[key] || ""}
+                    />
+                  ) : (
+                    <input
+                      className='form-control'
+                      type={type}
+                      id={key}
+                      name={key}
+                      required
+                      onChange={handleChange}
+                      value={formData[key] || ""}
+                    />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          <input type='submit' value='Submit' />
+        </form>
+      ) : null}
+    </>
   );
 };
 

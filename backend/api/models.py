@@ -14,9 +14,34 @@ class Note(models.Model):
 
 
 # User Profiles
+class EmployeeProfile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="employee_profile"
+    )
+    hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    phone_number = models.CharField(max_length=20)
+
+
+class ClientProfile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="client_profile"
+    )
+    phone_number = models.CharField(max_length=255)
+
+
+# User Profiles
 # class Employee(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     user = models.OneToOneField(
+#         User, on_delete=models.CASCADE, related_name="employee_role"
+#     )
 #     hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
+#     phone_number = models.CharField(max_length=255)
+
+
+# class Client(models.Model):
+#     user = models.OneToOneField(
+#         User, on_delete=models.CASCADE, related_name="client_role"
+#     )
 #     phone_number = models.CharField(max_length=255)
 
 

@@ -1,10 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { LOGIN_STATUS } from "../constants";
 
 const Navbar = () => {
-  const username = "";
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const username = ""; // Fetch the username if available.
+
+  useEffect(() => {
+    const status = localStorage.getItem(LOGIN_STATUS);
+    setIsLoggedIn(status === "true");
+  }, []);
 
   return (
     <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
@@ -19,13 +26,14 @@ const Navbar = () => {
       >
         <span className='navbar-toggler-icon'></span>
       </button>
-      <div className='collapse navbar-collapse' id='navbarNav'>
+      <div className='collapse navbar-collapse' id='navbarNavDropdown'>
         <ul className='navbar-nav mr-auto'>
           <li className='nav-item active'>
             <Link className='nav-link' to='/'>
               Home
             </Link>
           </li>
+
           <li className='nav-item'>
             <Link className='nav-link' to='/materials'>
               Materials
@@ -41,14 +49,15 @@ const Navbar = () => {
               Projects
             </Link>
           </li>
+
           <li className='nav-item'>
-            <Link className='nav-link' to='/*'>
+            <Link className='nav-link' to='/users'>
               User Management
             </Link>
           </li>
         </ul>
         <ul className='navbar-nav'>
-          {localStorage.getItem(LOGIN_STATUS) === "true" ? (
+          {isLoggedIn ? (
             <>
               <li className='nav-item'>
                 <Link className='nav-link' to='/'>

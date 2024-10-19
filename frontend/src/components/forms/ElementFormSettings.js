@@ -19,4 +19,11 @@ export const settings = {
     description: { label: "Description", type: "textarea" },
     contingency: { label: "Contingency", type: "number" },
   },
+  employee: {
+    hourlyRate: { label: "Hourly Rate", type: "number" },
+    phoneNumber: { label: "Phone Number", type: "text" },
+  },
+  client: {
+    phoneNumber: { label: "Phone Number", type: "text" },
+  },
 };

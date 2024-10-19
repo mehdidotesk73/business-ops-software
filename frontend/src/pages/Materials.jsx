@@ -82,7 +82,7 @@ function MaterialsPage() {
       onSubmit={updateMaterial}
       method='edit'
       type='material'
-      buttonClassName='btn btn-outline-light btn-sm'
+      buttonClassName='btn btn-outline-dark btn-sm'
     />,
     { element: null }
   );
@@ -93,7 +93,7 @@ function MaterialsPage() {
     {
       label: "Inspect",
       action: inspectMaterial,
-      buttonClassName: "btn btn-outline-light btn-sm",
+      buttonClassName: "btn btn-outline-dark btn-sm",
     },
     {
       label: "Delete",

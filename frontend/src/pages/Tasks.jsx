@@ -78,18 +78,21 @@ function TasksPage() {
       onSubmit={updateTask}
       method='edit'
       type='task'
-      buttonClassName='btn btn-outline-light btn-sm'
+      buttonClassName='btn btn-outline-dark btn-sm'
     />,
     { element: null }
   );
 
   const actions = [
     { label: "View", action: viewModal },
-    { label: "Modify", action: modifyModal },
+    {
+      label: "Modify",
+      action: modifyModal,
+    },
     {
       label: "Inspect",
       action: inspectTask,
-      buttonClassName: "btn btn-outline-light btn-sm",
+      buttonClassName: "btn btn-outline-dark btn-sm",
     },
     {
       label: "Delete",

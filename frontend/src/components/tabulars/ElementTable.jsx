@@ -5,11 +5,10 @@ import styles from "../../styles/TableRow.module.css";
 function ElementTable({ tableKey = "table", elements, actions = null }) {
   // Get the row-display-settings for element type to be displayed
   const fields = elementDisplayFields[tableKey]?.row || {};
-
   // Construct row for each element
   function row(element) {
     return (
-      <tr key={element.id}>
+      <tr key={element.id} className={"table-secondary"}>
         {Object.keys(fields).map((key) => {
           let data = element[key];
           if (fields[key].map) data = fields[key].map(data);
@@ -17,13 +16,15 @@ function ElementTable({ tableKey = "table", elements, actions = null }) {
           if (fields[key].suffix) data = data + fields[key].suffix;
 
           return (
-            <td key={`${element.id}-${key}`} className={styles.tableTextRow}>
-              {data}
-            </td>
+            // <td key={`${element.id}-${key}`} className={styles.tableTextRow}>
+            //   {data}
+            // </td>
+            <td key={`${element.id}-${key}`}>{data}</td>
           );
         })}
         {actions && (
-          <td key={`${element.id}-actions`} className={`${styles.tableRow}`}>
+          // <td key={`${element.id}-actions`} className={`${styles.tableRow}`}>
+          <td key={`${element.id}-actions`}>
             {actions.map((action, index) => (
               <React.Fragment key={`${element.id}-${index}`}>
                 {index % 4 === 0 && index !== 0 && <div></div>}
@@ -35,7 +36,7 @@ function ElementTable({ tableKey = "table", elements, actions = null }) {
                       className={
                         action.buttonClassName
                           ? action.buttonClassName
-                          : "btn btn-light btn-sm"
+                          : "btn btn-dark btn-sm"
                       }
                       onClick={() => action.action(element)}
                     >
@@ -61,8 +62,12 @@ function ElementTable({ tableKey = "table", elements, actions = null }) {
             <th key={`${tableKey}-${key}`} className={styles.tableHeader}>
               {fields[key].as}
             </th>
+            // <th key={`${tableKey}-${key}`} className={"table-primary"}>
+            //   {fields[key].as}
+            // </th>
           ))}
           {actions && <th className={styles.tableHeader}>Actions</th>}
+          {/* {actions && <th className={"table-primary"}>Actions</th>} */}
         </tr>
       </thead>
       <tbody key={`${tableKey}-tbody`}>

@@ -17,8 +17,9 @@ function ElementViewCard({ type, element }) {
 
   Object.keys(fields).forEach((key) => {
     let data = element[key];
-    fields[key]["prefix"] ? (data = fields[key]["prefix"] + data) : null;
-    fields[key]["suffix"] ? (data = data + fields[key]["suffix"]) : null;
+    if (fields[key].map) data = fields[key].map(data);
+    if (fields[key].prefix) data = fields[key].prefix + data;
+    if (fields[key].suffix) data = data + fields[key].suffix;
     data = fields[key]["as"] + ": " + data;
 
     const tag = fields[key]["tag"] || "p"; // Default to <p> if no tag is specified

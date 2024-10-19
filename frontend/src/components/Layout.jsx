@@ -5,7 +5,9 @@ const Layout = ({ children }) => {
   return (
     <div>
       <Navbar />
-      <div className='p-3'>{children}</div>
+      <div className='p-3' background-color='#121212' color='#ffffff'>
+        {children}
+      </div>
     </div>
   );
 };
