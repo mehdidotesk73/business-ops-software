@@ -5,6 +5,7 @@ import { keysToCamelCase } from "../components/caseConverters";
 import ViewModal from "../components/modals/ViewModal";
 import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
+import ProjectAssignModal from "../components/modals/ProjectAssignModal";
 
 function ProjectsPage() {
   const [projects, setProjects] = useState([]);
@@ -24,7 +25,7 @@ function ProjectsPage() {
       }));
       updatedData = updatedData.map((project) => ({
         ...project,
-        coordinatorName: project.coordinator.name,
+        coordinatorName: project.coordinator ? project.coordinator.name : "",
       }));
       setProjects(updatedData);
     } catch (error) {
@@ -83,7 +84,10 @@ function ProjectsPage() {
     navigate(`/projects/${element.id}`);
   };
 
-  const assignProject = (element) => {};
+  const handleAssign = cloneElement(<ProjectAssignModal />, {
+    element: null,
+    onSubmit: getProjects,
+  });
 
   const runProjectReport = (element) => {};
 
@@ -116,8 +120,8 @@ function ProjectsPage() {
     },
     {
       label: "Assign",
-      action: assignProject,
-      buttonClassName: "btn btn-success btn-sm",
+      action: handleAssign,
+      // buttonClassName: "btn btn-success btn-sm",
     },
     {
       label: "Report",

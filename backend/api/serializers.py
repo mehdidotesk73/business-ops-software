@@ -22,6 +22,17 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
         model = EmployeeProfile
         fields = "__all__"
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get("request", None)
+
+        representation["user"] = UserSerializer(instance.user).data
+        if request and request.parser_context["kwargs"].get("pk"):
+            if hasattr(instance, "user"):
+                representation["user"] = UserSerializer(instance.user).data
+
+        return representation
+
 
 class ClientProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -117,7 +128,10 @@ class ProjectSerializer(serializers.ModelSerializer):
         return UserSerializer(instance.creator).data
 
     def get_coordinator(self, instance):
-        return UserSerializer(instance.coordinator).data
+        if instance.coordinator:
+            return UserSerializer(instance.coordinator).data
+        else:
+            return None
 
     def get_tasks(self, instance):
         # Serialize tasks

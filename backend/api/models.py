@@ -21,6 +21,10 @@ class EmployeeProfile(models.Model):
     hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
     phone_number = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.user.name
+        # return super().__str__()
+
 
 class ClientProfile(models.Model):
     user = models.OneToOneField(

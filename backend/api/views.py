@@ -420,6 +420,46 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
+    @action(detail=True, methods=["post"], url_path="assign-coordinator")
+    def assign_coordinator(self, request, pk=None):
+        project = self.get_object()
+        user_id = request.data.get("coordinator")
+
+        if not user_id:
+            return Response(
+                {"detail": "Employee is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        project.coordinator = user
+        project.save()
+
+        return Response(
+            {"detail": "Coordinator assigned successfully."}, status=status.HTTP_200_OK
+        )
+
+    @action(detail=True, methods=["post"], url_path="unassign-coordinator")
+    def unassign_coordinator(self, request, pk=None):
+        project = self.get_object()
+
+        project.coordinator = None
+        project.save()
+
+        return Response(
+            {"detail": "Coordinator unassigned successfully."},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=True, methods=["get"], url_path="report")
+    def report(self, request, pk=None):
+        pass
+
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
