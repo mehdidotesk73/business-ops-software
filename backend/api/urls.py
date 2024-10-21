@@ -38,11 +38,6 @@ urlpatterns = [
     path("", include(router_task_materials.urls)),
     path("", include(router_project_tasks.urls)),
     path("", include(router_project_materials.urls)),
-    path(
-        "projects/<int:pk>/assign-coordinator",
-        views.NoteDelete.as_view(),
-        name="assign-project-coordinator",
-    ),
     path("", include(router_users.urls)),
     path("", include(router_employees.urls)),
     path("", include(router_clients.urls)),
