@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
-  DetailedMaterialView,
-  DetailedTaskView,
-  DetailedProjectView,
-  DetailedUserView,
-} from "../cards/DetailedElementViews";
+  MainMaterialView,
+  MainTaskView,
+  MainProjectView,
+  MainAccountView,
+} from "../cards/CustomElementViews";
 import { capitalizeFirstLetters } from "../caseConverters";
 
 function ViewModal({
@@ -55,13 +55,13 @@ function ViewModal({
               </div>
               <div className='modal-body'>
                 {type === "material" ? (
-                  <DetailedMaterialView id={element.id} />
+                  <MainMaterialView id={element.id} />
                 ) : type === "task" ? (
-                  <DetailedTaskView id={element.id} />
+                  <MainTaskView id={element.id} />
                 ) : type === "project" ? (
-                  <DetailedProjectView id={element.id} />
+                  <MainProjectView id={element.id} />
                 ) : type === "user" ? (
-                  <DetailedUserView id={element.id} />
+                  <MainAccountView id={element.id} />
                 ) : null}
               </div>
               <div className='modal-footer'>

@@ -11,11 +11,13 @@ import TasksPage from "./pages/Tasks";
 import ProjectsPage from "./pages/Projects";
 import UsersPage from "./pages/Users";
 import {
-  DetailedMaterialView,
-  DetailedTaskView,
-  DetailedProjectView,
-  DetailedUserView,
-} from "./components/cards/DetailedElementViews";
+  MainMaterialView,
+  MainTaskView,
+  MainProjectView,
+  MainAccountView,
+} from "./components/cards/CustomElementViews";
+
+localStorage.setItem("USER", null);
 
 function Logout() {
   localStorage.clear();
@@ -69,7 +71,7 @@ function App() {
             path='/materials/:id'
             element={
               <ProtectedRoute>
-                <DetailedMaterialView />
+                <MainMaterialView />
               </ProtectedRoute>
             }
           />
@@ -77,7 +79,7 @@ function App() {
             path='/tasks/:id'
             element={
               <ProtectedRoute>
-                <DetailedTaskView />
+                <MainTaskView />
               </ProtectedRoute>
             }
           />
@@ -85,7 +87,7 @@ function App() {
             path='/projects/:id'
             element={
               <ProtectedRoute>
-                <DetailedProjectView />
+                <MainProjectView />
               </ProtectedRoute>
             }
           />

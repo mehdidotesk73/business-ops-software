@@ -9,7 +9,7 @@ import ViewModal from "../modals/ViewModal";
 import ProfileModal from "../modals/ProfileModal";
 import ParentChildModal from "../modals/ParentChildModal";
 
-export function DetailedMaterialView({ id: propId }) {
+export function MainMaterialView({ id: propId }) {
   const { id: paramId } = useParams();
   const id = propId || paramId; // Use propId if passed, otherwise use paramId
   const [material, setMaterial] = useState(null);
@@ -40,7 +40,7 @@ export function DetailedMaterialView({ id: propId }) {
   ) : null;
 }
 
-export function DetailedTaskView({ id: propId }) {
+export function MainTaskView({ id: propId }) {
   const { id: paramId } = useParams();
   const id = propId || paramId; // Use propId if passed, otherwise use paramId
   const [taskInfo, setTaskInfo] = useState(null);
@@ -115,7 +115,7 @@ export function DetailedTaskView({ id: propId }) {
   ) : null;
 }
 
-export function DetailedProjectView({ id: propId }) {
+export function MainProjectView({ id: propId }) {
   const { id: paramId } = useParams();
   const id = propId || paramId; // Use propId if passed, otherwise use paramId
   const [projectInfo, setProjectInfo] = useState(null);
@@ -239,7 +239,7 @@ export function DetailedProjectView({ id: propId }) {
   ) : null;
 }
 
-export function DetailedUserView({ id: propId }) {
+export function MainAccountView({ id: propId }) {
   const { id: paramId } = useParams();
   const id = propId || paramId; // Use propId if passed, otherwise use paramId
   const [userInfo, setUserInfo] = useState(null);
@@ -294,3 +294,8 @@ export function DetailedUserView({ id: propId }) {
     </>
   ) : null;
 }
+
+// Add main account view for users to edit own account.
+// Change password
+// Change name
+// Change contact

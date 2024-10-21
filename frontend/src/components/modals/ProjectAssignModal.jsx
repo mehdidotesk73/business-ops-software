@@ -11,7 +11,6 @@ function ProjectAssignModal({ element, onSubmit }) {
   const handleClose = () => setShowModal(false);
 
   function handleUnassign() {
-    console.log("unassign project");
     api
       .post(`api/projects/${element.id}/unassign-coordinator/`, {})
       .then((response) => {

@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { keysToCamelCase } from "../components/caseConverters";
 import ViewModal from "../components/modals/ViewModal";
-import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
-import ProfileModal from "../components/modals/ProfileModal";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -26,6 +24,8 @@ function UsersPage() {
   };
 
   const deleteUser = (element) => {
+    console.log(`Deleting user. ID: ${element.id}`);
+
     api
       .delete(`/api/users/${element.id}/`)
       .then((res) => {
@@ -45,7 +45,14 @@ function UsersPage() {
     { element: null }
   );
 
-  const actions = [{ label: "View", action: viewModal }];
+  const actions = [
+    { label: "View", action: viewModal },
+    {
+      label: "Delete",
+      action: deleteUser,
+      buttonClassName: "btn btn-danger btn-sm",
+    },
+  ];
 
   return (
     <div>

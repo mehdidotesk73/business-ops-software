@@ -46,7 +46,4 @@ urlpatterns = [
     path("", include(router_users.urls)),
     path("", include(router_employees.urls)),
     path("", include(router_clients.urls)),
-    path(
-        "math-operations/", views.MathOperationsView.as_view(), name="math_operations"
-    ),
 ]

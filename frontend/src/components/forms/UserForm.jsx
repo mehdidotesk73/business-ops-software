@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "../../api";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN, LOGIN_STATUS } from "../../constants";
+import { ACCESS_TOKEN, REFRESH_TOKEN, USER } from "../../constants";
 import "../../styles/Form.css";
 import LoadingIndicator from "../LoadingIndicator";
 
@@ -29,9 +29,10 @@ function UserForm({ route, method }) {
         email: email,
       });
       if (method === "login") {
+        console.log(res.data);
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        localStorage.setItem(LOGIN_STATUS, "true");
+        localStorage.setItem(USER, username);
         navigate("/");
       } else {
         navigate("/login");

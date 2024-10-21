@@ -32,65 +32,7 @@ from .models import (
 )
 from rest_framework import viewsets
 from django.contrib.auth.models import User
-
-
-class AnalyzeProject(APIView):
-    def post(self, request, project_id):
-        project = get_object_or_404(Project, id=project_id)
-        coordinator = get_object_or_404(User, id=project.coordinator)
-        zipcode = project.zipcode
-
-        if number1 is None or number2 is None:
-            return Response(
-                {"error": "Both numbers are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            number1 = float(number1)
-            number2 = float(number2)
-        except ValueError:
-            return Response(
-                {"error": "Invalid numbers"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        result = {
-            "addition": number1 + number2,
-            "subtraction": number1 - number2,
-            "multiplication": number1 * number2,
-            "division": number1 / number2 if number2 != 0 else "undefined",
-        }
-
-        return Response(result, status=status.HTTP_200_OK)
-
-
-class MathOperationsView(APIView):
-    def post(self, request):
-        number1 = request.data.get("number1")
-        number2 = request.data.get("number2")
-
-        if number1 is None or number2 is None:
-            return Response(
-                {"error": "Both numbers are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            number1 = float(number1)
-            number2 = float(number2)
-        except ValueError:
-            return Response(
-                {"error": "Invalid numbers"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        result = {
-            "addition": number1 + number2,
-            "subtraction": number1 - number2,
-            "multiplication": number1 * number2,
-            "division": number1 / number2 if number2 != 0 else "undefined",
-        }
-
-        return Response(result, status=status.HTTP_200_OK)
+import pandas as pd
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -99,7 +41,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         return Response(
-            "Users must be created through registeration.",
+            "Users must be created through /api/user/register.",
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -456,9 +398,230 @@ class ProjectViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @action(detail=True, methods=["get"], url_path="report")
+    def project_input_report(self, project):
+        serializer = self.get_serializer(project)
+        project_input_report = serializer.data
+        employee_profile = get_object_or_404(
+            EmployeeProfile, user=project.coordinator.id
+        )
+        employee_profile = EmployeeProfileSerializer(employee_profile).data
+        all_project_materials = serializer.get_all_materials(project)
+
+        project_input_report["employee"] = employee_profile
+        project_input_report["all_materials"] = all_project_materials
+
+        return project_input_report
+
+    def get_labor_hours(self, project):
+        serializer = self.get_serializer(project)
+        labor_hours = 0
+        tasks = serializer.get_tasks(project)
+        for task in tasks:
+            labor_hours += task["labor_hours"] * task["quantity"]
+
+        print(f"Labor Hours: {labor_hours}")
+        return labor_hours
+
+    def get_hourly_rate(self, project):
+        serializer = self.get_serializer(project)
+        coordinator = serializer.get_coordinator(project)
+        print(f"Coordinator: {coordinator}")
+
+        employee_profile = get_object_or_404(EmployeeProfile, user=coordinator["id"])
+        print(f"Employee: {employee_profile}")
+
+        hourly_rate = float(employee_profile.hourly_rate)
+        print(f"Hourly Rate: {hourly_rate}")
+        return hourly_rate
+
+    def get_material_cost(self, project):
+        serializer = self.get_serializer(project)
+        material_cost = 0
+
+        # Calculate cost for all materials, both direct materials and indirect materials through tasks
+        materials = serializer.get_all_materials(project)
+        for material in materials:
+            material_cost += material["unit_price"] * material["quantity"]
+
+        return material_cost
+
+    def project_cost_report(self, project, commute_time, contingency):
+        project_hourly_rate = self.get_hourly_rate(project)
+        project_labor_hours = self.get_labor_hours(project) + commute_time
+        project_labor_cost = round(project_hourly_rate * project_labor_hours, 2)
+        project_material_cost = round(self.get_material_cost(project), 2)
+        project_cost = project_labor_cost + project_material_cost
+        contingency_cost = round(contingency * project_cost, 2)
+        expected_project_cost = project_cost + contingency_cost
+
+        project_cost_report = {
+            "project_labor_hours": project_labor_hours,
+            "project_hourly_rate": project_hourly_rate,
+            "project_labor_cost": project_labor_cost,
+            "material_cost": project_material_cost,
+            "project_cost": project_cost,
+            "contingency_cost": contingency_cost,
+            "expected_project_cost": expected_project_cost,
+        }
+
+        return project_cost_report
+
+    def project_profit_report(self, project, expected_cost):
+        # returns a profit percentage based on project site location
+        # The current implementation is a linear interpolation between 10%-20% profit margin based on median zipcode
+        # income.
+        zipcode_data = pd.DataFrame(columns=["zipcode", "median_income"])
+        zipcodes = [
+            89138,
+            89135,
+            89179,
+            89158,
+            89131,
+            89141,
+            89124,
+            89166,
+            89178,
+            89144,
+            89149,
+            89139,
+            89143,
+            89148,
+            89129,
+            89113,
+            89130,
+            89123,
+            89134,
+            89183,
+            89161,
+            89120,
+            89147,
+            89117,
+            89145,
+            89128,
+            89118,
+            89156,
+            89142,
+            89146,
+            89108,
+            89122,
+            89107,
+            89110,
+            89121,
+            89109,
+            89104,
+            89115,
+            89103,
+            89102,
+            89119,
+            89169,
+        ]
+        median_incomes = [
+            157170,
+            113377,
+            110356,
+            110039,
+            109956,
+            105993,
+            104830,
+            101276,
+            101256,
+            101000,
+            96454,
+            93003,
+            92575,
+            92362,
+            87620,
+            85504,
+            81584,
+            78195,
+            76500,
+            76488,
+            73333,
+            68934,
+            68251,
+            68206,
+            67308,
+            66534,
+            65929,
+            61856,
+            60245,
+            57581,
+            55935,
+            55216,
+            50876,
+            50802,
+            50757,
+            49818,
+            48355,
+            47189,
+            46139,
+            45724,
+            44939,
+            37200,
+        ]
+        for zipcode, median_income in zip(zipcodes, median_incomes):
+            zipcode_data.loc[len(zipcode_data)] = {
+                "zipcode": str(zipcode),
+                "median_income": median_income,
+            }
+        max_median_income = zipcode_data["median_income"].max()
+        min_median_income = zipcode_data["median_income"].min()
+        max_profit = 0.2
+        min_profit = 0.1
+        zipcode_data["profit_margin"] = (max_profit - min_profit) / (
+            max_median_income - min_median_income
+        ) * (zipcode_data["median_income"] - min_median_income) + min_profit
+
+        if (
+            project.zipcode in zipcode_data["zipcode"].values
+        ):  # linear interpolate if zipcode found
+            profit_margin = zipcode_data["profit_margin"][
+                zipcode_data["zipcode"] == project.zipcode
+            ].iloc[0]
+        else:  # average profit if zipcode not found
+            profit_margin = (min_profit + max_profit) / 2
+        profit_margin = round(profit_margin, 3)
+        expected_profit = round(profit_margin * expected_cost, 2)
+
+        project_profit_report = {
+            "zipcode": project.zipcode,
+            "profit_margin": profit_margin,
+            "expected_profit": expected_profit,
+        }
+
+        return project_profit_report
+
+    @action(detail=True, methods=["post"], url_path="report")
     def report(self, request, pk=None):
-        pass
+        project = self.get_object()
+        try:
+            commute_time = float(request.data.get("commuteTime", 0))
+        except ValueError:
+            commute_time = 0
+
+        try:
+            contingency = float(request.data.get("contingency", 0))
+        except ValueError:
+            contingency = 0
+
+        input_report = self.project_input_report(project)
+        cost_report = self.project_cost_report(
+            project=project, commute_time=commute_time, contingency=contingency
+        )
+        profit_report = self.project_profit_report(
+            project=project, expected_cost=cost_report["expected_project_cost"]
+        )
+
+        response_json = {
+            "input_report": input_report,
+            "cost_report": cost_report,
+            "profit_report": profit_report,
+        }
+
+        return Response(
+            response_json,
+            status=status.HTTP_200_OK,
+        )
 
 
 class TaskViewSet(viewsets.ModelViewSet):

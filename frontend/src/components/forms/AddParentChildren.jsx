@@ -11,7 +11,7 @@ const AddParentChildren = ({ parentType, parentId, childType, onAdd }) => {
   const [quantity, setQuantity] = useState("");
 
   useEffect(() => {
-    // Fetch existing materials
+    // Fetch existing children
     switch (childType) {
       case "material":
         api

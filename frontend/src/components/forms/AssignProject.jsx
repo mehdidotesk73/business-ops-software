@@ -7,7 +7,7 @@ const AssignProject = ({ projectId, onSubmit }) => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    // Fetch existing materials
+    // Fetch existing employees
     api
       .get("/api/employees/")
       .then((response) => setEmployees(response.data))
@@ -15,7 +15,6 @@ const AssignProject = ({ projectId, onSubmit }) => {
   }, []);
 
   const handleSubmit = () => {
-    console.log(selectedUser.value);
     if (selectedUser) {
       api
         .post(`api/projects/${projectId}/assign-coordinator/`, {
@@ -33,8 +32,6 @@ const AssignProject = ({ projectId, onSubmit }) => {
       alert("Please select an employee to assign as coordinator");
     }
   };
-
-  employees.map((employee) => console.log(employee));
 
   return (
     <div>

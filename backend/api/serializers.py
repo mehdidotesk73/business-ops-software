@@ -157,6 +157,37 @@ class ProjectSerializer(serializers.ModelSerializer):
             materials.append(material)
         return materials
 
+    def get_all_materials(self, instance):
+        all_materials = {}
+
+        # Direct materials
+        project_materials = ProjectMaterial.objects.filter(project=instance)
+        for pm in project_materials:
+            material = pm.material
+            material_data = MaterialSerializer(material).data
+            material_data["quantity"] = pm.quantity
+            if material.id in all_materials:
+                all_materials[material.id]["quantity"] += pm.quantity
+            else:
+                material_data["quantity"] = pm.quantity
+                all_materials[material.id] = material_data
+
+        # Indirect materials through tasks
+        project_tasks = ProjectTask.objects.filter(project=instance)
+        for pt in project_tasks:
+            task_materials = TaskMaterial.objects.filter(task=pt.task)
+            for tm in task_materials:
+                material = tm.material
+                quantity = tm.quantity * pt.quantity
+                material_data = MaterialSerializer(material).data
+                if material.id in all_materials:
+                    all_materials[material.id]["quantity"] += quantity
+                else:
+                    material_data["quantity"] = quantity
+                    all_materials[material.id] = material_data
+
+        return list(all_materials.values())
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         request = self.context.get("request", None)

@@ -22,7 +22,7 @@ class EmployeeProfile(models.Model):
     phone_number = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.user.name
+        return f"{self.user.first_name} {self.user.last_name}"
         # return super().__str__()
 
 

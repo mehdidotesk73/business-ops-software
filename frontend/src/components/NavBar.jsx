@@ -2,16 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { LOGIN_STATUS } from "../constants";
+import { USER } from "../constants";
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const username = ""; // Fetch the username if available.
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const status = localStorage.getItem(LOGIN_STATUS);
-    setIsLoggedIn(status === "true");
-  }, []);
+    // Fetch the username if available.
+    setUsername(localStorage.getItem(USER));
+  }, [username]);
 
   return (
     <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
@@ -57,7 +56,7 @@ const Navbar = () => {
           </li>
         </ul>
         <ul className='navbar-nav'>
-          {isLoggedIn ? (
+          {username ? (
             <>
               <li className='nav-item'>
                 <Link className='nav-link' to='/'>
