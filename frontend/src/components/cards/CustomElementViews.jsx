@@ -239,6 +239,91 @@ export function MainProjectView({ id: propId }) {
   ) : null;
 }
 
+export function ProjectReportView({ id: propId }) {
+  const { id: paramId } = useParams();
+  const id = propId || paramId; // Use propId if passed, otherwise use paramId
+  const [projectReport, setProjectReport] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getProjectReport();
+  }, []);
+
+  const getProjectReport = async () => {
+    try {
+      const res = await api.post(`/api/projects/${id}/report/`, {
+        commuteTime: 0,
+      });
+      if (res.status === 200) {
+        // alert("Project Analyzed.");
+      } else {
+        alert("Failed to run project report.");
+      }
+      // console.log(res.data);
+      const camelCaseData = keysToCamelCase(res.data);
+      setProjectReport(camelCaseData);
+    } catch (error) {
+      alert(error);
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  } else {
+    console.log(projectReport);
+    projectReport.inputReport.creatorName =
+      projectReport.inputReport.creator.name;
+    projectReport.inputReport.coordinatorPhoneNumber =
+      projectReport.inputReport.employee.phoneNumber;
+    projectReport.inputReport.coordinatorName =
+      projectReport.inputReport.coordinator.name;
+  }
+
+  return projectReport ? (
+    <>
+      <ElementViewCard
+        type='projectInputReport'
+        element={projectReport.inputReport}
+      ></ElementViewCard>
+
+      <TableViewCard
+        title='Tasks list'
+        table={
+          <ElementTable
+            tableKey='projectTask'
+            elements={projectReport.inputReport.tasks}
+            actions={null}
+          ></ElementTable>
+        }
+      ></TableViewCard>
+
+      <TableViewCard
+        title='Materials list'
+        table={
+          <ElementTable
+            tableKey='projectMaterial'
+            elements={projectReport.inputReport.allMaterials}
+            actions={null}
+          ></ElementTable>
+        }
+      ></TableViewCard>
+
+      <ElementViewCard
+        type='projectCostReport'
+        element={projectReport.costReport}
+      ></ElementViewCard>
+
+      <ElementViewCard
+        type='projectProfitReport'
+        element={projectReport.profitReport}
+      ></ElementViewCard>
+    </>
+  ) : null;
+}
+
 export function MainAccountView({ id: propId }) {
   const { id: paramId } = useParams();
   const id = propId || paramId; // Use propId if passed, otherwise use paramId

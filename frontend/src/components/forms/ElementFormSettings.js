@@ -22,6 +22,7 @@ export const settings = {
   employee: {
     hourlyRate: { label: "Hourly Rate", type: "number" },
     phoneNumber: { label: "Phone Number", type: "text" },
+    overallRating: { label: "Rating", type: "rating" },
   },
   client: {
     phoneNumber: { label: "Phone Number", type: "text" },

@@ -1,5 +1,7 @@
 // DynamicForm.js
 import React, { useState } from "react";
+// import Rating from "react-rating";
+import Rating from "@mui/material/Rating";
 import { settings } from "./ElementFormSettings";
 
 const DynamicForm = ({ type, onSubmit, element = null }) => {
@@ -10,6 +12,14 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
     setFormData({
       ...formData,
       [name]: value,
+    });
+  };
+
+  const handleRatingChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: parseFloat(value),
     });
   };
 
@@ -40,6 +50,14 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
                       required
                       onChange={handleChange}
                       value={formData[key] || ""}
+                    />
+                  ) : type === "rating" ? (
+                    <Rating
+                      id={key}
+                      name={key}
+                      required
+                      onChange={handleRatingChange}
+                      value={formData[key] || 0}
                     />
                   ) : (
                     <input

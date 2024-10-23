@@ -40,6 +40,10 @@ const phoneNumberMapper = (data) => {
   }
   return formattedData;
 };
+const percentageMapper = (data) => {
+  const factor = Math.pow(10, 2);
+  return Math.round(data * 100 * factor) / factor + "%";
+};
 
 export const elementDisplayFields = {
   material: {
@@ -133,6 +137,7 @@ export const elementDisplayFields = {
         place: "body",
         tag: "li",
         className: "list-group-item",
+        map: percentageMapper,
       },
       creatorName: {
         as: "Creator",
@@ -211,6 +216,7 @@ export const elementDisplayFields = {
     row: {
       hourlyRate: { as: "Hourly Rate", map: hourlyRateMapper },
       phoneNumber: { as: "Phone Number", map: phoneNumberMapper },
+      overallRating: { as: "Rate" },
     },
     card: {
       name: {
@@ -233,6 +239,13 @@ export const elementDisplayFields = {
         className: "list-group-item",
         map: phoneNumberMapper,
       },
+      overallRating: {
+        as: "Rate",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        special: "Rating",
+      },
     },
   },
 
@@ -253,6 +266,156 @@ export const elementDisplayFields = {
         tag: "li",
         className: "list-group-item",
         map: phoneNumberMapper,
+      },
+    },
+  },
+  projectInputReport: {
+    card: {
+      name: { as: "Name", place: "header", tag: "h5", className: "card-title" },
+      description: {
+        as: "Description",
+        place: "header",
+        className: "card-text",
+      },
+      createdAt: {
+        as: "Creation",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: dateMapper,
+      },
+      clientName: {
+        as: "Client",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      siteLocation: {
+        as: "Site",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      zipcode: {
+        as: "Zipcode",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      contingency: {
+        as: "Contingency",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: percentageMapper,
+      },
+      creatorName: {
+        as: "Creator",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      coordinatorName: {
+        as: "Coordinator",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      coordinatorPhoneNumber: {
+        as: "Coordinator Contact",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: phoneNumberMapper,
+      },
+    },
+  },
+  projectCostReport: {
+    card: {
+      cardTitle: {
+        place: "header",
+        tag: "h5",
+        className: "card-title",
+        data: "Cost Report",
+      },
+      projectLaborHours: {
+        as: "Total labor hours",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: hourMapper,
+      },
+      projectHourlyRate: {
+        as: "Hourly rate",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: hourlyRateMapper,
+      },
+      projectLaborCost: {
+        as: "Cost of Labor",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: dollarMapper,
+      },
+      projectMaterialCost: {
+        as: "Cost of Material",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: dollarMapper,
+      },
+      projectCost: {
+        as: "SubTotal",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: dollarMapper,
+      },
+      contingencyCost: {
+        as: "Cost of Contingencies",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: dollarMapper,
+      },
+      expectedProjectCost: {
+        as: "Total Cost",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: dollarMapper,
+      },
+    },
+  },
+  projectProfitReport: {
+    card: {
+      cardTitle: {
+        place: "header",
+        tag: "h5",
+        className: "card-title",
+        data: "Profit Report",
+      },
+      zipcode: {
+        as: "Project Zipcode",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      profitMargin: {
+        as: "Recommended Profit Margin",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: percentageMapper,
+      },
+      expectedProfit: {
+        as: "Expected Profit",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+        map: dollarMapper,
       },
     },
   },

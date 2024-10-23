@@ -1,6 +1,7 @@
 import React from "react";
 import { elementDisplayFields } from "../ElementDisplaySettings";
 import styles from "../../styles/Card.module.css";
+import { Rating } from "@mui/material";
 
 function ElementViewCard({ type, element }) {
   let headerElements = [];
@@ -16,19 +17,37 @@ function ElementViewCard({ type, element }) {
   const fields = elementDisplayFields[type]?.card || {};
 
   Object.keys(fields).forEach((key) => {
-    let data = element[key];
+    let data;
+    let label;
+    if (element.hasOwnProperty(key)) {
+      data = element[key];
+    } else {
+      data = fields[key].data;
+    }
     if (fields[key].map) data = fields[key].map(data);
     if (fields[key].prefix) data = fields[key].prefix + data;
     if (fields[key].suffix) data = data + fields[key].suffix;
-    data = fields[key]["as"] + ": " + data;
+    label = fields[key]["as"] ? fields[key]["as"] + ": " : "";
 
     const tag = fields[key]["tag"] || "p"; // Default to <p> if no tag is specified
     const style = fields[key]["place"] === "header" ? null : styles.cardBody; // Keep default style for header
-    const className = fields[key]["className"] || ""; // Default to <p> if no tag is specified
+    const className = fields[key]["className"] || "";
     const cardElement = React.createElement(
       tag,
       { key, className: `${className} ${style}` },
-      data
+      fields[key].special === "Rating"
+        ? [
+            <div key={key} style={{ display: "flex" }}>
+              <p style={{ marginRight: "10px" }}>{label}</p>
+              {React.createElement(Rating, {
+                key,
+                readOnly: true,
+                precision: 0.5,
+                value: parseFloat(data),
+              })}
+            </div>,
+          ]
+        : label + data
     );
 
     if (fields[key]["place"] === "header") {

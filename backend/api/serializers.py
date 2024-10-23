@@ -10,6 +10,7 @@ from .models import (
     TaskMaterial,
     ProjectMaterial,
     ProjectTask,
+    EmployeeTaskRating,
 )
 
 
@@ -27,9 +28,35 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
         request = self.context.get("request", None)
 
         representation["user"] = UserSerializer(instance.user).data
-        if request and request.parser_context["kwargs"].get("pk"):
-            if hasattr(instance, "user"):
-                representation["user"] = UserSerializer(instance.user).data
+
+        return representation
+
+
+class EmployeeTaskRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeTaskRating
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get("request", None)
+
+        representation["employee"] = EmployeeProfileSerializer(instance.employee).data
+        user_id = representation["employee"]["user"]["id"]
+        user = User.objects.get(pk=user_id)
+        representation["user"] = UserSerializer(user).data
+        representation["employee"]["user"] = user_id
+        representation["task"] = TaskSerializer(instance.task).data
+
+        representation["user"].pop("username")
+        representation["user"].pop("first_name")
+        representation["user"].pop("last_name")
+        representation["user"].pop("email")
+        representation["employee"].pop("hourly_rate")
+        representation["employee"].pop("phone_number")
+        representation["task"].pop("labor_hours")
+        representation["task"].pop("description")
+        representation["task"].pop("materials")
 
         return representation
 

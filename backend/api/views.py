@@ -15,6 +15,7 @@ from .serializers import (
     TaskMaterialSerializer,
     ProjectTaskSerializer,
     ProjectMaterialSerializer,
+    EmployeeTaskRatingSerializer,
 )
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -29,6 +30,7 @@ from .models import (
     TaskMaterial,
     ProjectTask,
     ProjectMaterial,
+    EmployeeTaskRating,
 )
 from rest_framework import viewsets
 from django.contrib.auth.models import User
@@ -54,13 +56,17 @@ class EmployeeProfileViewSet(viewsets.ModelViewSet):
         user_id = request.data.get("user")
         hourly_rate = request.data.get("hourly_rate")
         phone_number = request.data.get("phone_number")
+        overall_rating = request.data.get("overall_rating")
 
         # Fetch the user instance
         user = User.objects.get(pk=user_id)
-
         employee_profile, created = EmployeeProfile.objects.update_or_create(
             user=user,
-            defaults={"hourly_rate": hourly_rate, "phone_number": phone_number},
+            defaults={
+                "hourly_rate": hourly_rate,
+                "phone_number": phone_number,
+                "overall_rating": overall_rating,
+            },
         )
 
         serializer = self.get_serializer(employee_profile)
@@ -72,13 +78,12 @@ class EmployeeProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
         if getattr(instance, "_prefetched_objects_cache", None):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
 
-    def delete(self, request):
+    def destroy(self, request):
         user = request.query_params.get("user")
         employee_profile = EmployeeProfile.objects.filter(user=user)
         if employee_profile.exists():
@@ -112,6 +117,24 @@ class EmployeeProfileViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
+class EmployeeTaskViewSet(viewsets.ModelViewSet):
+    queryset = EmployeeTaskRating.objects.all()
+    serializer_class = EmployeeTaskRatingSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # Custom logic for updating additional fields if needed
+        # if "rating" in request.data:
+        #     instance.save()
+
+        return Response(serializer.data)
+
+
 class ClientProfileViewSet(viewsets.ModelViewSet):
     queryset = ClientProfile.objects.all()
     serializer_class = ClientProfileSerializer
@@ -142,7 +165,7 @@ class ClientProfileViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def delete(self, request):
+    def destroy(self, request):
         user = request.query_params.get("user")
         client_profile = ClientProfile.objects.filter(user=user)
         if client_profile.exists():
@@ -213,7 +236,7 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def delete(self, request):
+    def destroy(self, request):
         project_id = request.query_params.get("project")
         task_id = request.query_params.get("task")
         print(project_id)
@@ -269,7 +292,7 @@ class ProjectMaterialViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def delete(self, request):
+    def destroy(self, request):
         project_id = request.query_params.get("project")
         material_id = request.query_params.get("material")
         print(project_id)
@@ -323,7 +346,7 @@ class TaskMaterialViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def delete(self, request):
+    def destroy(self, request):
         task_id = request.query_params.get("task")
         material_id = request.query_params.get("material")
         print(task_id)
@@ -458,7 +481,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             "project_labor_hours": project_labor_hours,
             "project_hourly_rate": project_hourly_rate,
             "project_labor_cost": project_labor_cost,
-            "material_cost": project_material_cost,
+            "project_material_cost": project_material_cost,
             "project_cost": project_cost,
             "contingency_cost": contingency_cost,
             "expected_project_cost": expected_project_cost,
@@ -566,8 +589,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             }
         max_median_income = zipcode_data["median_income"].max()
         min_median_income = zipcode_data["median_income"].min()
-        max_profit = 0.2
-        min_profit = 0.1
+        max_profit = 0.5
+        min_profit = 0.15
         zipcode_data["profit_margin"] = (max_profit - min_profit) / (
             max_median_income - min_median_income
         ) * (zipcode_data["median_income"] - min_median_income) + min_profit
@@ -600,7 +623,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             commute_time = 0
 
         try:
-            contingency = float(request.data.get("contingency", 0))
+            contingency = float(request.data.get("contingency", project.contingency))
         except ValueError:
             contingency = 0
 

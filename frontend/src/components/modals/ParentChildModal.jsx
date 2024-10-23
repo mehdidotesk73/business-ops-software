@@ -2,7 +2,7 @@ import { useState } from "react";
 import AddParentChildren from "../forms/AddParentChildren";
 import { capitalizeFirstLetters } from "../caseConverters";
 
-function ParentChildModal({ parentType, parentId, childType, taskId, onAdd }) {
+function ParentChildModal({ parentType, parentId, childType, onAdd }) {
   const [showModal, setShowModal] = useState(false);
 
   const handleShow = () => setShowModal(true);

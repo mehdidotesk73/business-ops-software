@@ -26,6 +26,9 @@ router_users.register(r"users", views.UserViewSet)
 router_employees = DefaultRouter()
 router_employees.register(r"employees", views.EmployeeProfileViewSet)
 
+router_employee_ratings = DefaultRouter()
+router_employee_ratings.register(r"employee-ratings", views.EmployeeTaskViewSet)
+
 router_clients = DefaultRouter()
 router_clients.register(r"clients", views.ClientProfileViewSet)
 
@@ -41,4 +44,5 @@ urlpatterns = [
     path("", include(router_users.urls)),
     path("", include(router_employees.urls)),
     path("", include(router_clients.urls)),
+    path("", include(router_employee_ratings.urls)),
 ]

@@ -7,6 +7,7 @@ const ModifyProfile = ({ userId, onAdd }) => {
   const [selectedProfileType, setSelectedProfileType] = useState(null);
 
   const handleSubmit = async (formData) => {
+    console.log(formData);
     try {
       let response;
       switch (selectedProfileType.value) {
@@ -15,6 +16,7 @@ const ModifyProfile = ({ userId, onAdd }) => {
             user: userId,
             hourly_rate: parseFloat(formData.hourlyRate),
             phone_number: formData.phoneNumber,
+            overall_rating: formData.overallRating,
           });
           break;
         case "client":

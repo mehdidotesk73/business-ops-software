@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 # Create your models here.
@@ -11,26 +12,6 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
-
-
-# User Profiles
-class EmployeeProfile(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="employee_profile"
-    )
-    hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
-    phone_number = models.CharField(max_length=20)
-
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
-        # return super().__str__()
-
-
-class ClientProfile(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="client_profile"
-    )
-    phone_number = models.CharField(max_length=255)
 
 
 # Project Management Models
@@ -118,3 +99,50 @@ class TaskMaterial(models.Model):
 
     def __str__(self):
         return f"{self.task.name} - {self.material.name} ({self.quantity})"
+
+
+# User Profiles
+class EmployeeProfile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="employee_profile"
+    )
+    hourly_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    phone_number = models.CharField(max_length=20)
+    overall_rating = models.FloatField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+
+
+class EmployeeTaskRating(models.Model):
+    employee = models.ForeignKey(
+        EmployeeProfile, related_name="ratings", on_delete=models.CASCADE
+    )
+    task = models.ForeignKey(Task, related_name="ratings", on_delete=models.CASCADE)
+    rating = models.FloatField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+    success_chance = models.FloatField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(1)]
+    )
+    performed_count = models.IntegerField(default=0)
+    recall_count = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ("employee", "task")
+
+    def save(self, *args, **kwargs):
+        self.success_chance = self.rating
+        super(EmployeeTaskRating, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.employee} - {self.task} - {self.rating}"
+
+
+class ClientProfile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="client_profile"
+    )
+    phone_number = models.CharField(max_length=255)

@@ -14,6 +14,7 @@ import {
   MainMaterialView,
   MainTaskView,
   MainProjectView,
+  ProjectReportView,
   MainAccountView,
 } from "./components/cards/CustomElementViews";
 
@@ -88,6 +89,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MainProjectView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='/projects/:id/report'
+            element={
+              <ProtectedRoute>
+                <ProjectReportView />
               </ProtectedRoute>
             }
           />

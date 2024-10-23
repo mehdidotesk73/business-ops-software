@@ -89,7 +89,16 @@ function ProjectsPage() {
     onSubmit: getProjects,
   });
 
-  const runProjectReport = (element) => {};
+  const reportProject = (element) => {
+    if (element.coordinator) {
+      navigate(`/projects/${element.id}/report`);
+    } else {
+      alert(
+        "Project must be assigned to a coordinator before running report.\n\n" +
+          "This it because the project hourly rate of labor is equal to the coordinator's rate."
+      );
+    }
+  };
 
   const viewModal = cloneElement(<ViewModal type='project' />, {
     element: null,
@@ -125,7 +134,7 @@ function ProjectsPage() {
     },
     {
       label: "Report",
-      action: runProjectReport,
+      action: reportProject,
       buttonClassName: "btn btn-success btn-sm",
     },
   ];
