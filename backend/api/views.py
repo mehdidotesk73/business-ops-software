@@ -128,11 +128,75 @@ class EmployeeTaskViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        # Custom logic for updating additional fields if needed
-        # if "rating" in request.data:
-        #     instance.save()
-
         return Response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="by-employee")
+    def get_by_employee(self, request):
+        employee_id = request.query_params.get("employee_id")
+        if not employee_id:
+            return Response(
+                {"detail": "employee_id is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch the employee instance
+        try:
+            employee = EmployeeProfile.objects.get(pk=employee_id)
+        except EmployeeProfile.DoesNotExist:
+            return Response(
+                {"detail": "Employee not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+        employee_task_ratings = EmployeeTaskRating.objects.filter(
+            employee=employee
+        ).all()
+
+        if employee_task_ratings:
+            serializer = self.get_serializer(employee_task_ratings, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=["put"], url_path="by-employee-and-task")
+    def update_by_employee_and_task(self, request):
+        employee_id = request.data.get("employee_id")
+        task_id = request.data.get("task_id")
+        rating = request.data.get("rating")
+        print(f"employee_id is {employee_id}, task_id is {task_id}, rating is {rating}")
+        if not employee_id:
+            return Response(
+                {"detail": "employee_id is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not task_id:
+            return Response(
+                {"detail": "task_id is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not rating:
+            return Response(
+                {"detail": "rating is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch the employee instance
+        try:
+            employee_task_rating = EmployeeTaskRating.objects.filter(
+                employee=employee_id, task=task_id
+            ).first()
+            print(f"employee_task_rating is {employee_task_rating}")
+        except EmployeeTaskRating.DoesNotExist:
+            return Response(
+                {"detail": "Employee-Task-Rating not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = self.get_serializer(
+            employee_task_rating, data={"rating": rating}, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 
 class ClientProfileViewSet(viewsets.ModelViewSet):

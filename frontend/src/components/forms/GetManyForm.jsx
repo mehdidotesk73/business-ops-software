@@ -1,10 +1,12 @@
 // DynamicForm.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Rating from "@mui/material/Rating";
 import { settings } from "./ElementFormSettings";
 
-const DynamicForm = ({ type, onSubmit, element = null }) => {
-  const [formData, setFormData] = useState(element || {});
+const GetManyForm = ({ elements, inputList, inputTags, onSubmit }) => {
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,4 +82,4 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
   );
 };
 
-export default DynamicForm;
+export default GetManyForm;

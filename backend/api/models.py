@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Avg
 
 
 # Create your models here.
@@ -136,6 +137,12 @@ class EmployeeTaskRating(models.Model):
     def save(self, *args, **kwargs):
         self.success_chance = self.rating
         super(EmployeeTaskRating, self).save(*args, **kwargs)
+
+        # Recalculate employee overall_rating
+        self.employee.overall_rating = EmployeeTaskRating.objects.filter(
+            employee=self.employee
+        ).aggregate(Avg("rating"))["rating__avg"]
+        self.employee.save()
 
     def __str__(self):
         return f"{self.employee} - {self.task} - {self.rating}"

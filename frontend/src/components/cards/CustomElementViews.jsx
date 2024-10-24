@@ -8,6 +8,7 @@ import { keysToCamelCase } from "../caseConverters";
 import ViewModal from "../modals/ViewModal";
 import ProfileModal from "../modals/ProfileModal";
 import ParentChildModal from "../modals/ParentChildModal";
+import EmployeeTaskRatingModal from "../modals/EmployeeTaskRatingModal";
 
 export function MainMaterialView({ id: propId }) {
   const { id: paramId } = useParams();
@@ -346,6 +347,40 @@ export function MainAccountView({ id: propId }) {
     }
   };
 
+  const onSubmitEmployeeTaskRatings = async (employeeId, taskRatings) => {
+    for (const [taskId, rating] of Object.entries(taskRatings)) {
+      const payload = {
+        employee_id: employeeId,
+        task_id: taskId,
+        rating: rating,
+      };
+      try {
+        await api.put(`/api/employee-ratings/by-employee-and-task/`, payload);
+      } catch (error) {
+        console.error(
+          `Error updating task ${taskId} for employee ${employeeId}:`,
+          error
+        );
+      }
+    }
+    getUser();
+  };
+
+  // const onSubmitEmployeeTaskRatings = async (employeeId, taskRatings) => {
+  //   console.log(employeeId);
+  //   Object.entries(taskRatings).forEach(([taskId, rating]) => {
+  //     console.log(taskId, rating);
+  //     payload = {
+  //       employee: employeeId,
+  //       task: taskId,
+  //       rating: rating
+  //     }
+  //     await api.put(`/api/employee-ratings/`,
+  //       payload
+  //     )
+  //   });
+  // };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -365,10 +400,18 @@ export function MainAccountView({ id: propId }) {
         onAdd={handleProfileAdd}
       />
       {userInfo.employeeProfile ? (
-        <ElementViewCard
-          type='employee'
-          element={userInfo.employeeProfile}
-        ></ElementViewCard>
+        <>
+          <ElementViewCard
+            type='employee'
+            element={userInfo.employeeProfile}
+          ></ElementViewCard>
+          <EmployeeTaskRatingModal
+            onSubmit={(data) =>
+              onSubmitEmployeeTaskRatings(userInfo.employeeProfile.id, data)
+            }
+            employee={userInfo.employeeProfile}
+          ></EmployeeTaskRatingModal>
+        </>
       ) : null}
       {userInfo.clientProfile ? (
         <ElementViewCard
