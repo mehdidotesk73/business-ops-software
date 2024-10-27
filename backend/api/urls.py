@@ -33,8 +33,6 @@ router_clients = DefaultRouter()
 router_clients.register(r"clients", views.ClientProfileViewSet)
 
 urlpatterns = [
-    path("notes/", views.NoteListCreate.as_view(), name="note-list"),
-    path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
     path("", include(router_materials.urls)),
     path("", include(router_tasks.urls)),
     path("", include(router_projects.urls)),

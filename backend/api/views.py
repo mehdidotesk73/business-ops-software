@@ -6,7 +6,6 @@ from rest_framework.decorators import action
 from rest_framework.views import APIView
 from .serializers import (
     UserSerializer,
-    NoteSerializer,
     EmployeeProfileSerializer,
     ClientProfileSerializer,
     MaterialSerializer,
@@ -21,7 +20,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from .models import (
-    Note,
     EmployeeProfile,
     ClientProfile,
     Material,
@@ -719,35 +717,6 @@ class TaskViewSet(viewsets.ModelViewSet):
 class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
-
-
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return user.notes.all()
-        # return Note.objects.filter(author=user)
-
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
-        return super().perform_create(serializer)
-
-
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
-
-    def perform_destroy(self, instance):
-        return super().perform_destroy(instance)
 
 
 class CreateUserView(generics.CreateAPIView):

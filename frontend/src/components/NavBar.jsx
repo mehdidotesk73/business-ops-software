@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { USER } from "../constants";
+import UserContext from "./userContext";
 
 const Navbar = () => {
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    // Fetch the username if available.
-    setUsername(localStorage.getItem(USER));
-  }, [username]);
+  const { user, setUser } = useContext(UserContext);
 
   return (
     <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
@@ -56,11 +51,11 @@ const Navbar = () => {
           </li>
         </ul>
         <ul className='navbar-nav'>
-          {username ? (
+          {user ? (
             <>
               <li className='nav-item'>
                 <Link className='nav-link' to='/'>
-                  Welcome {username}
+                  Welcome {user}
                 </Link>
               </li>
               <li className='nav-item'>

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import api from "../../api";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN, USER } from "../../constants";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 import "../../styles/Form.css";
 import LoadingIndicator from "../LoadingIndicator";
+import UserContext from "../userContext";
 
 function UserForm({ route, method }) {
   const [username, setUsername] = useState("");
@@ -13,6 +14,7 @@ function UserForm({ route, method }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
 
   const name = method === "login" ? "Login" : "Register";
 
@@ -32,7 +34,8 @@ function UserForm({ route, method }) {
         console.log(res.data);
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        localStorage.setItem(USER, username);
+
+        setUser(username);
         navigate("/");
       } else {
         navigate("/login");

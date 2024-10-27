@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import (
-    Note,
     EmployeeProfile,
     ClientProfile,
     Material,
@@ -102,13 +101,6 @@ class UserSerializer(serializers.ModelSerializer):
                 representation["client_profile"]["name"] = "Client"
 
         return representation
-
-
-class NoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
-        extra_kwargs = {"author": {"read_only": True}}
 
 
 class MaterialSerializer(serializers.ModelSerializer):

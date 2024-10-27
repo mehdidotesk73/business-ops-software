@@ -1,83 +1,30 @@
-import { useState, useEffect } from "react";
-import api from "../api";
-import Note from "../components/Note";
 import "../styles/Home.css";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-  const [notes, setNotes] = useState([]);
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
-
-  useEffect(() => {
-    getNotes();
-  }, []);
-
-  const getNotes = () => {
-    api
-      .get("/api/notes/")
-      .then((res) => {
-        setNotes(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => alert(err));
-  };
-
-  const deleteNote = (id) => {
-    api
-      .delete(`/api/notes/delete/${id}/`)
-      .then((res) => {
-        if (res.status === 204) alert("Note deleted!");
-        else alert("Failed to delete note.");
-        getNotes();
-      })
-      .catch((error) => alert(error));
-  };
-
-  const createNote = (e) => {
-    e.preventDefault();
-    api
-      .post("/api/notes/", { content, title })
-      .then((res) => {
-        if (res.status === 201) alert("Note created!");
-        else alert("Failed to make note.");
-        getNotes();
-      })
-      .catch((error) => alert(error));
-  };
+  const navigate = useNavigate();
 
   return (
-    <div>
-      <div>
-        <h2>Notes</h2>
-        {notes.map((note) => (
-          <Note note={note} onDelete={deleteNote} key={note.id} />
-        ))}
+    <div
+      className='position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-dark'
+      style={{ display: "block", color: "white" }}
+    >
+      <div className='col-md-5 p-lg-5 mx-auto my-5'>
+        <h1 className='display-4 font-weight-normal'>
+          Business Operations Support
+        </h1>
+        <p className='lead font-weight-normal'>
+          Start building projects by clicking the link below
+        </p>
+        <button
+          className='btn btn-primary'
+          onClick={() => navigate("/projects")}
+        >
+          Get started
+        </button>
       </div>
-      <h2>Create a note</h2>
-      <form onSubmit={createNote}>
-        <label htmlFor='title'>Title:</label>
-        <br />
-        <input
-          type='text'
-          id='title'
-          name='title'
-          required
-          onChange={(e) => setTitle(e.target.value)}
-          value={title}
-        />
-
-        <label htmlFor='content'>Content:</label>
-        <br />
-        <textarea
-          id='content'
-          name='content'
-          required
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        ></textarea>
-
-        <input type='submit' value='Submit' />
-      </form>
+      <div className='product-device box-shadow d-none d-md-block'></div>
+      <div className='product-device product-device-2 box-shadow d-none d-md-block'></div>
     </div>
   );
 }
