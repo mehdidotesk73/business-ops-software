@@ -12,6 +12,7 @@ class Project(models.Model):
     zipcode = models.CharField(max_length=5)
     description = models.CharField(max_length=500)
     contingency = models.FloatField(default=0)
+    notes = models.CharField(max_length=2000, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     creator = models.ForeignKey(
