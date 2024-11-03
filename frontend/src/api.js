@@ -3,6 +3,10 @@ import { ACCESS_TOKEN } from "./constants";
 
 const apiUrl = "/choreo-apis/business-ops-software/backend/v1";
 
+console.log(
+  import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl
+);
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
 });
