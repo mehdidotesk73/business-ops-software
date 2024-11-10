@@ -22,6 +22,8 @@ function UserForm({ route, method }) {
     setLoading(true);
     e.preventDefault();
 
+    console.log(api.defaults.baseURL);
+
     try {
       const res = await api.post(route, {
         username: username,
