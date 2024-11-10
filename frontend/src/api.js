@@ -3,8 +3,12 @@ import { ACCESS_TOKEN } from "./constants";
 
 const apiUrl = "/choreo-apis/backend-3834885064:8000";
 
+// const api = axios.create({
+//   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
+// });
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
+  baseURL: apiUrl,
 });
 
 console.log(api.defaults.baseURL);
