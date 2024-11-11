@@ -5,8 +5,6 @@ import UserContext from "../components/userContext";
 function Login() {
   const { setUser } = useContext(UserContext);
 
-  console.log("Test in login");
-
   const handleLogin = (userData) => {
     setUser(userData);
     // Additional login logic
