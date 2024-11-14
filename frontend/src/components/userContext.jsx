@@ -1,14 +1,13 @@
 import React, { createContext, useState } from "react";
+import useAuth from "./useAuth";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const auth = useAuth();
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={{ auth }}>{children}</UserContext.Provider>
   );
 };
 

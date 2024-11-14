@@ -6,7 +6,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import UserContext from "./userContext";
 
 const Navbar = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { auth } = useContext(UserContext);
+  const { username } = auth;
 
   return (
     <nav className='navbar navbar-expand-lg navbar-dark bg-dark ps-3 pe-3'>
@@ -57,11 +58,11 @@ const Navbar = () => {
           </li>
         </ul>
         <ul className='navbar-nav'>
-          {user ? (
+          {username ? (
             <>
               <li className='nav-item'>
-                <Link className='nav-link' to='/'>
-                  Welcome {user}
+                <Link className='nav-link' to='/account'>
+                  Welcome {username}
                 </Link>
               </li>
               <li className='nav-item'>
