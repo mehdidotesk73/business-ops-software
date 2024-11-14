@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import api from "../../api";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 import "../../styles/Form.css";
 import LoadingIndicator from "../LoadingIndicator";
 import UserContext from "../userContext";
@@ -14,7 +13,8 @@ function UserForm({ route, method }) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { auth } = useContext(UserContext);
+  const { authenticate } = auth;
 
   const name = method === "login" ? "Login" : "Register";
 
@@ -25,21 +25,19 @@ function UserForm({ route, method }) {
     console.log(api.defaults.baseURL);
 
     try {
-      const res = await api.post(route, {
-        username: username,
-        password: password,
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-      });
+      const credentials = { username, password };
       if (method === "login") {
-        console.log(res.data);
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
-        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-
-        setUser(username);
+        await authenticate(credentials);
         navigate("/");
       } else {
+        console.log(route);
+        await api.post(route, {
+          username,
+          password,
+          first_name: firstName,
+          last_name: lastName,
+          email,
+        });
         navigate("/login");
       }
     } catch (error) {
@@ -66,7 +64,7 @@ function UserForm({ route, method }) {
         onChange={(e) => setPassword(e.target.value)}
         placeholder='Password'
       />
-      {method === "register" ? (
+      {method === "register" && (
         <>
           <input
             className='form-input'
@@ -90,8 +88,7 @@ function UserForm({ route, method }) {
             placeholder='Email address'
           />
         </>
-      ) : null}
-
+      )}
       {loading && <LoadingIndicator />}
       <button className='form-button' type='submit'>
         {name}

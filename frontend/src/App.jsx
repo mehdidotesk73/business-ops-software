@@ -10,6 +10,7 @@ import MaterialsPage from "./pages/Materials";
 import TasksPage from "./pages/Tasks";
 import ProjectsPage from "./pages/Projects";
 import UsersPage from "./pages/Users";
+import AccountPage from "./pages/Account";
 import {
   MainMaterialView,
   MainTaskView,
@@ -20,12 +21,12 @@ import {
 import UserContext, { UserProvider } from "./components/userContext";
 
 function Logout() {
-  const { setUser } = useContext(UserContext);
+  const { auth } = useContext(UserContext);
+  const { logout } = auth;
 
-  localStorage.clear();
   useEffect(() => {
-    setUser(null);
-  }, [setUser]);
+    logout();
+  }, [logout]);
 
   return <Navigate to='/login' />;
 }
@@ -112,6 +113,15 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/logout' element={<Logout />} />
             <Route path='/register' element={<RegisterAndLogout />} />
+
+            <Route
+              path='/account'
+              element={
+                <ProtectedRoute>
+                  <AccountPage />
+                </ProtectedRoute>
+              }
+            />
 
             <Route path='*' element={<NotFound />}></Route>
           </Routes>
