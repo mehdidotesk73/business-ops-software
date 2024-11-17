@@ -4,7 +4,7 @@ import {
   MainMaterialView,
   MainTaskView,
   MainProjectView,
-  MainAccountView,
+  MainUserView,
 } from "../cards/CustomElementViews";
 import { capitalizeFirstLetters } from "../caseConverters";
 
@@ -61,7 +61,7 @@ function ViewModal({
                 ) : type === "project" ? (
                   <MainProjectView id={element.id} />
                 ) : type === "user" ? (
-                  <MainAccountView id={element.id} />
+                  <MainUserView id={element.id} />
                 ) : null}
               </div>
               <div className='modal-footer'>

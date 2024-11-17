@@ -83,6 +83,12 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+    def update(self, instance, validated_data):
+        if "password" in validated_data:
+            instance.set_password(validated_data["password"])
+            validated_data.pop("password")
+        return super().update(instance, validated_data)
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         request = self.context.get("request", None)

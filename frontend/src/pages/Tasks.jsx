@@ -21,6 +21,7 @@ function TasksPage() {
       setTasks(camelCaseData);
     } catch (error) {
       console.error("Error fetching data:", error);
+      alert(error);
     }
   };
 
