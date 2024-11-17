@@ -16,7 +16,6 @@ import {
   MainTaskView,
   MainProjectView,
   ProjectReportView,
-  MainAccountView,
 } from "./components/cards/CustomElementViews";
 import UserContext, { UserProvider } from "./components/userContext";
 

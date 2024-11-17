@@ -325,7 +325,7 @@ export function ProjectReportView({ id: propId }) {
   ) : null;
 }
 
-export function MainAccountView({ id: propId }) {
+export function MainUserView({ id: propId }) {
   const { id: paramId } = useParams();
   const id = propId || paramId; // Use propId if passed, otherwise use paramId
   const [userInfo, setUserInfo] = useState(null);
@@ -366,29 +366,96 @@ export function MainAccountView({ id: propId }) {
     getUser();
   };
 
-  // const onSubmitEmployeeTaskRatings = async (employeeId, taskRatings) => {
-  //   console.log(employeeId);
-  //   Object.entries(taskRatings).forEach(([taskId, rating]) => {
-  //     console.log(taskId, rating);
-  //     payload = {
-  //       employee: employeeId,
-  //       task: taskId,
-  //       rating: rating
-  //     }
-  //     await api.put(`/api/employee-ratings/`,
-  //       payload
-  //     )
-  //   });
-  // };
-
   if (loading) {
     return <p>Loading...</p>;
+  } else {
+    console.log("User:", userInfo);
   }
 
   const handleProfileAdd = () => {
     setLoading(true);
     getUser();
   };
+
+  return userInfo ? (
+    <>
+      <ElementViewCard type='user' element={userInfo}></ElementViewCard>
+      <ProfileModal element={userInfo} method='add' onAdd={handleProfileAdd} />
+      <ProfileModal
+        element={userInfo}
+        method='delete'
+        onAdd={handleProfileAdd}
+      />
+      {userInfo.employeeProfile ? (
+        <>
+          <ElementViewCard
+            type='employee'
+            element={userInfo.employeeProfile}
+          ></ElementViewCard>
+          <EmployeeTaskRatingModal
+            onSubmit={(data) =>
+              onSubmitEmployeeTaskRatings(userInfo.employeeProfile.id, data)
+            }
+            employee={userInfo.employeeProfile}
+          ></EmployeeTaskRatingModal>
+        </>
+      ) : null}
+      {userInfo.clientProfile ? (
+        <ElementViewCard
+          type='client'
+          element={userInfo.clientProfile}
+        ></ElementViewCard>
+      ) : null}
+    </>
+  ) : null;
+}
+
+export function SelfUserView({ id: propId }) {
+  const [user, setUser] = useState(null);
+  const { auth } = useContext(UserContext);
+  const { userId, authenticate } = auth;
+  const navigate = useNavigate;
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const getUser = async () => {
+    try {
+      const res = await api.get(`/api/user/${userId}/`);
+      const camelCaseData = keysToCamelCase(res.data);
+      setUser(camelCaseData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const { id: paramId } = useParams();
+  const id = propId || paramId; // Use propId if passed, otherwise use paramId
+  const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   getUser();
+  // }, []);
+
+  // const getUser = async () => {
+  //   try {
+  //     const res = await api.get(`/api/users/${id}/`);
+  //     const camelCaseData = keysToCamelCase(res.data);
+  //     setUserInfo(camelCaseData);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  } else {
+    console.log("User:", userInfo);
+  }
 
   return userInfo ? (
     <>

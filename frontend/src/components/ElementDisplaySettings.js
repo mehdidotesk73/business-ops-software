@@ -191,14 +191,27 @@ export const elementDisplayFields = {
       email: { as: "Email" },
     },
     card: {
-      name: {
-        as: "Name",
+      title: {
+        as: "",
         place: "header",
         tag: "h5",
         className: "card-title",
+        data: "User",
       },
       username: {
         as: "Username",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      firstName: {
+        as: "First Name",
+        place: "body",
+        tag: "li",
+        className: "list-group-item",
+      },
+      lastName: {
+        as: "Last Name",
         place: "body",
         tag: "li",
         className: "list-group-item",

@@ -1,5 +1,65 @@
+import Login from "../../pages/Login";
+
 // ElementSettings.js
 export const settings = {
+  login: {
+    userName: { label: "Username", type: "text", placeholder: "Username" },
+    password: { label: "Password", type: "password", placeholder: "Password" },
+  },
+  register: {
+    username: {
+      label: "Username",
+      type: "text",
+      placeholder: "* Required",
+    },
+    password: {
+      label: "Password",
+      type: "password",
+      placeholder: "* Required",
+    },
+    firstName: {
+      label: "First Name",
+      type: "text",
+      placeholder: "* Required",
+    },
+    lastName: {
+      label: "Last Name",
+      type: "text",
+      placeholder: "* Required",
+    },
+    email: {
+      label: "Email",
+      type: "text",
+      placeholder: "* Required",
+    },
+  },
+  user: {
+    username: {
+      label: "Username",
+      type: "text",
+      placeholder: "* Required",
+    },
+    password: {
+      label: "Password",
+      type: "password",
+      placeholder: "* Required",
+    },
+    firstName: {
+      label: "First Name",
+      type: "text",
+      placeholder: "* Required",
+    },
+    lastName: {
+      label: "Last Name",
+      type: "text",
+      placeholder: "* Required",
+    },
+    email: {
+      label: "Email",
+      type: "text",
+      placeholder: "* Required",
+    },
+  },
   material: {
     name: { label: "Material Name", type: "text" },
     unit: { label: "Unit", type: "text" },
