@@ -26,8 +26,11 @@ function ModifyModal({
       case "project":
         onSubmit(formData);
         break;
+      case "user":
+        onSubmit(formData);
+        break;
     }
-    // handleClose();
+    handleClose();
   };
 
   const modalForm = (

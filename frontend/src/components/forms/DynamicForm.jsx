@@ -2,24 +2,25 @@
 import React, { useState } from "react";
 import Rating from "@mui/material/Rating";
 import { settings } from "./ElementFormSettings";
+import LoadingIndicator from "../LoadingIndicator";
 
 const DynamicForm = ({ type, onSubmit, element = null }) => {
   const [formData, setFormData] = useState(element || {});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleRatingChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: parseFloat(value),
-    });
+    const { name, value, className } = e.target;
+    if (className === "MuiRating-visuallyHidden") {
+      setFormData({
+        ...formData,
+        [name]: parseFloat(value),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -34,7 +35,7 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
       {type ? (
         <form onSubmit={handleSubmit}>
           {Object.keys(fields).map((key) => {
-            const { label, type } = fields[key];
+            const { label, type, placeholder } = fields[key];
             return (
               <div key={key} className='form-group row align-items-center'>
                 <label htmlFor={key} className='col col-form-label'>
@@ -49,13 +50,14 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
                       required
                       onChange={handleChange}
                       value={formData[key] || ""}
+                      placeholder={placeholder}
                     />
                   ) : type === "rating" ? (
                     <Rating
                       id={key}
                       name={key}
                       required
-                      onChange={handleRatingChange}
+                      onChange={handleChange}
                       value={formData[key] || 0}
                     />
                   ) : (
@@ -67,12 +69,14 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
                       required
                       onChange={handleChange}
                       value={formData[key] || ""}
+                      placeholder={placeholder}
                     />
                   )}
                 </div>
               </div>
             );
           })}
+          {loading && <LoadingIndicator />}
           <input type='submit' value='Submit' />
         </form>
       ) : null}
