@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 from rest_framework import generics, viewsets
 from rest_framework.decorators import action
 from .serializers import (
@@ -32,6 +33,8 @@ from .models import (
 from rest_framework import viewsets
 from django.contrib.auth.models import User
 import pandas as pd
+from io import StringIO
+from .signals import create_task_employee_ratings
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -297,7 +300,7 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def destroy(self, request):
+    def delete(self, request):
         project_id = request.query_params.get("project")
         task_id = request.query_params.get("task")
         print(project_id)
@@ -353,7 +356,7 @@ class ProjectMaterialViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def destroy(self, request):
+    def delete(self, request):
         project_id = request.query_params.get("project")
         material_id = request.query_params.get("material")
         print(project_id)
@@ -407,7 +410,7 @@ class TaskMaterialViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    def destroy(self, request):
+    def delete(self, request):
         task_id = request.query_params.get("task")
         material_id = request.query_params.get("material")
         print(task_id)
@@ -712,10 +715,110 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
+    @action(detail=False, methods=["post"], url_path="batch-create")
+    @transaction.atomic
+    def batch_create(self, request, pk=None):
+        file = request.FILES.get("file")
+        if not file:
+            return Response(
+                {"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        # Read the CSV file into a pandas DataFrame
+        file_data = file.read().decode("utf-8")
+        csv_data = StringIO(file_data)
+        try:
+            df = pd.read_csv(csv_data, header=None)
+        except Exception as e:
+            return Response(
+                {"error": f"Problem reading file: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        tasks = []
+        task_materials = []
+        for index, row in df.iterrows():
+            task = Task(
+                name=row[0],
+                labor_hours=row[1],
+                description=row[2],
+            )
+            tasks.append(task)
+            task_material_names = row[3].split(";")
+            for task_material_name in task_material_names:
+                material = Material.objects.filter(name=task_material_name).first()
+                if material == None:
+                    return Response(
+                        {
+                            "error": f'Error reading file. Material "{task_material_name}" in task "{task.name}" not found.'
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                task_materials.append(
+                    TaskMaterial(task=task, material=material, quantity=1)
+                )
+
+        try:
+            with transaction.atomic():
+                Task.objects.bulk_create(tasks)
+                TaskMaterial.objects.bulk_create(task_materials)
+        except Exception as e:
+            return Response(
+                {
+                    "error": f"Unable to create tasks or link materials to tasks: {str(e)}"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        for task in tasks:
+            create_task_employee_ratings(Task, task, created=True)
+
+        return Response(
+            {"message": "File uploaded successfully"}, status=status.HTTP_200_OK
+        )
+
 
 class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
+
+    @action(detail=False, methods=["post"], url_path="batch-create")
+    def batch_create(self, request, pk=None):
+        file = request.FILES.get("file")
+        if not file:
+            return Response(
+                {"error": "No file provided"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        # Read the CSV file into a pandas DataFrame
+        file_data = file.read().decode("utf-8")
+        csv_data = StringIO(file_data)
+        try:
+            df = pd.read_csv(csv_data, header=None)
+        except:
+            return Response(
+                {"error": "Problem reading file"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Create a list of Material instances from the DataFrame
+        materials = [
+            Material(
+                name=row[0],
+                unit=row[1],
+                unit_price=row[2],
+                description=row[3],
+            )
+            for index, row in df.iterrows()
+        ]
+        try:
+            Material.objects.bulk_create(materials)
+        except:
+            return Response(
+                {"error": "Unable to create materials"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"message": "File uploaded successfully"}, status=status.HTTP_200_OK
+        )
 
 
 class CreateUserView(generics.CreateAPIView):

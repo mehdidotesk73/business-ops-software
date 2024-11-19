@@ -5,9 +5,12 @@ import { keysToCamelCase } from "../components/caseConverters";
 import ViewModal from "../components/modals/ViewModal";
 import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
+import BatchCreateElements from "../components/modals/BatchCreateElements";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 function TasksPage() {
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,13 +18,16 @@ function TasksPage() {
   }, []);
 
   const getTasks = async () => {
+    setLoading(true);
     try {
       const res = await api.get("/api/tasks/");
       const camelCaseData = keysToCamelCase(res.data);
       setTasks(camelCaseData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       alert(error);
+      setLoading(false);
     }
   };
 
@@ -49,6 +55,21 @@ function TasksPage() {
         getTasks();
       })
       .catch((error) => alert(error));
+  };
+
+  const batchCreateTask = (taskData) => {
+    setLoading(true);
+    api
+      .post("/api/tasks/batch-create/", taskData)
+      .then((res) => {
+        if (res.status === 200);
+        else alert("Failed to create tasks.");
+        getTasks();
+      })
+      .catch((error) => {
+        alert(error.response.data.error);
+        setLoading(false);
+      });
   };
 
   const updateTask = (taskData) => {
@@ -110,6 +131,8 @@ function TasksPage() {
             type='task'
             buttonClassName='btn btn-success btn-sm'
           />
+          &nbsp;
+          <BatchCreateElements onSubmit={batchCreateTask} type={"task"} />
         </div>
         {tasks.length > 0 && (
           <ElementTable
@@ -118,6 +141,7 @@ function TasksPage() {
             actions={actions}
           ></ElementTable>
         )}
+        {loading && <LoadingIndicator />}
       </div>
     </div>
   );

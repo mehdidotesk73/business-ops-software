@@ -6,9 +6,11 @@ import ViewModal from "../components/modals/ViewModal";
 import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
 import ProjectAssignModal from "../components/modals/ProjectAssignModal";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 function ProjectsPage() {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,6 +18,7 @@ function ProjectsPage() {
   }, []);
 
   const getProjects = async () => {
+    setLoading(true);
     try {
       const res = await api.get("/api/projects/");
       const camelCaseData = keysToCamelCase(res.data);
@@ -28,9 +31,11 @@ function ProjectsPage() {
         coordinatorName: project.coordinator ? project.coordinator.name : "",
       }));
       setProjects(updatedData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       alert(error);
+      setLoading(false);
     }
   };
 
@@ -159,6 +164,7 @@ function ProjectsPage() {
             actions={actions}
           ></ElementTable>
         )}
+        {loading && <LoadingIndicator />}
       </div>
     </div>
   );
