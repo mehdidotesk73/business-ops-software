@@ -4,9 +4,11 @@ import api from "../api";
 import { keysToCamelCase } from "../components/caseConverters";
 import ViewModal from "../components/modals/ViewModal";
 import ElementTable from "../components/tabulars/ElementTable";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,13 +16,16 @@ function UsersPage() {
   }, []);
 
   const getUsers = async () => {
+    setLoading(true);
     try {
       const res = await api.get("/api/users/");
       const camelCaseData = keysToCamelCase(res.data);
       setUsers(camelCaseData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       alert(error);
+      setLoading(false);
     }
   };
 
@@ -66,6 +71,7 @@ function UsersPage() {
             actions={actions}
           ></ElementTable>
         )}
+        {loading && <LoadingIndicator />}
       </div>
     </div>
   );

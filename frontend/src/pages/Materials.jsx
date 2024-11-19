@@ -5,9 +5,12 @@ import { keysToCamelCase } from "../components/caseConverters";
 import ViewModal from "../components/modals/ViewModal";
 import ModifyModal from "../components/modals/ModifyModal";
 import ElementTable from "../components/tabulars/ElementTable";
+import BatchCreateElements from "../components/modals/BatchCreateElements";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 function MaterialsPage() {
   const [materials, setMaterials] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,13 +18,16 @@ function MaterialsPage() {
   }, []);
 
   const getMaterials = async () => {
+    setLoading(true);
     try {
       const res = await api.get("/api/materials/");
       const camelCaseData = keysToCamelCase(res.data);
       setMaterials(camelCaseData);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
       alert(error);
+      setLoading(false);
     }
   };
 
@@ -33,7 +39,9 @@ function MaterialsPage() {
         else alert("Failed to delete material.");
         getMaterials();
       })
-      .catch((error) => alert(error));
+      .catch((error) => {
+        alert(error.response.data.error);
+      });
   };
 
   const createMaterial = (materialData) => {
@@ -50,6 +58,21 @@ function MaterialsPage() {
         getMaterials();
       })
       .catch((error) => alert(error));
+  };
+
+  const batchCreateMaterial = (materialData) => {
+    setLoading(true);
+    api
+      .post("/api/materials/batch-create/", materialData)
+      .then((res) => {
+        if (res.status === 200);
+        else alert("Failed to create materials.");
+        getMaterials();
+      })
+      .catch((error) => {
+        alert(error.response.data.error);
+        setLoading(false);
+      });
   };
 
   const updateMaterial = (materialData) => {
@@ -111,6 +134,11 @@ function MaterialsPage() {
             type='material'
             buttonClassName='btn btn-success btn-sm'
           />
+          &nbsp;
+          <BatchCreateElements
+            onSubmit={batchCreateMaterial}
+            type={"material"}
+          />
         </div>
         {materials.length > 0 && (
           <ElementTable
@@ -119,6 +147,7 @@ function MaterialsPage() {
             actions={actions}
           />
         )}
+        {loading && <LoadingIndicator />}
       </div>
     </div>
   );

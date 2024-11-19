@@ -9,6 +9,7 @@ import ViewModal from "../modals/ViewModal";
 import ProfileModal from "../modals/ProfileModal";
 import ParentChildModal from "../modals/ParentChildModal";
 import EmployeeTaskRatingModal from "../modals/EmployeeTaskRatingModal";
+import LoadingIndicator from "../LoadingIndicator";
 
 export function MainMaterialView({ id: propId }) {
   const { id: paramId } = useParams();
@@ -32,7 +33,7 @@ export function MainMaterialView({ id: propId }) {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingIndicator />;
 
   return material ? (
     <>
@@ -76,7 +77,7 @@ export function MainTaskView({ id: propId }) {
       .catch((error) => alert(error));
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <LoadingIndicator />;
 
   const viewMaterialModal = cloneElement(
     <ViewModal type='material' buttonClassName='btn btn-info btn-sm' />,
@@ -131,10 +132,13 @@ export function MainProjectView({ id: propId }) {
       const res = await api.get(`/api/projects/${id}/`);
       const camelCaseData = keysToCamelCase(res.data);
       camelCaseData.creatorName = camelCaseData.creator.name;
-      camelCaseData.coordinatorName = camelCaseData.coordinator.name;
+      camelCaseData.coordinatorName = camelCaseData.coordinator
+        ? camelCaseData.coordinator.name
+        : "";
       setProjectInfo(camelCaseData);
     } catch (error) {
       console.error("Error fetching data:", error);
+      alert(error);
     } finally {
       setLoading(false);
     }
@@ -169,7 +173,7 @@ export function MainProjectView({ id: propId }) {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <LoadingIndicator />;
   } else console.log(projectInfo);
 
   const viewTaskModal = cloneElement(
@@ -272,7 +276,7 @@ export function ProjectReportView({ id: propId }) {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <LoadingIndicator />;
   } else {
     console.log(projectReport);
     projectReport.inputReport.creatorName =
@@ -367,7 +371,7 @@ export function MainUserView({ id: propId }) {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <LoadingIndicator />;
   } else {
     console.log("User:", userInfo);
   }
