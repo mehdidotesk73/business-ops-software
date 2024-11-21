@@ -56,6 +56,7 @@ function AccountPage() {
           method='edit'
           type='user'
           element={user}
+          buttonClassName='btn btn-outline-light btn-sm'
         />
       </div>
     );

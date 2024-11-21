@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import styles from "../styles/Base.module.css";
 
 import UserContext from "./userContext";
 
@@ -10,7 +11,9 @@ const Navbar = () => {
   const { username } = auth;
 
   return (
-    <nav className='navbar navbar-expand-lg navbar-dark bg-dark ps-3 pe-3'>
+    <nav
+      className={`navbar navbar-expand-lg navbar-dark bg-dark ps-3 pe-3 ${styles.navbar}`}
+    >
       <Link className='navbar-brand' to='/'>
         Friends Electric
       </Link>

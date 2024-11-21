@@ -18,6 +18,7 @@ import {
   ProjectReportView,
 } from "./components/cards/CustomElementViews";
 import UserContext, { UserProvider } from "./components/userContext";
+import "../src/styles/global.css";
 
 function Logout() {
   const { auth } = useContext(UserContext);

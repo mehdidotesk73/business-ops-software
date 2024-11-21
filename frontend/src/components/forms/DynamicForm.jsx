@@ -33,14 +33,16 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
   return (
     <>
       {type ? (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{ color: "black" }}>
           {Object.keys(fields).map((key) => {
             const { label, type, placeholder } = fields[key];
             return (
               <div key={key} className='form-group row align-items-center'>
-                <label htmlFor={key} className='col col-form-label'>
-                  {label + ":"}
-                </label>
+                {label && (
+                  <label htmlFor={key} className='col col-form-label'>
+                    {label + ":"}
+                  </label>
+                )}
                 <div className='col'>
                   {type === "textarea" ? (
                     <textarea
@@ -60,6 +62,8 @@ const DynamicForm = ({ type, onSubmit, element = null }) => {
                       onChange={handleChange}
                       value={formData[key] || 0}
                     />
+                  ) : type === "hr" ? (
+                    <hr />
                   ) : (
                     <input
                       className='form-control'

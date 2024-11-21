@@ -1,0 +1,14 @@
+/* CSS HEX */
+:root {
+  --color-black: black;
+  --color-white: white;
+  --color-bkg: #1c1c1c;
+  --color-header: #2e3c48;
+  --color-body: #bcc7d1;
+  --color-border: #4f6272;
+  --color-highlight-1: #b5c7d3;
+  --color-highlight-2: #c8d6e5;
+  --color-contrast: #d3a7a0;
+  --color-text-light: #ededed;
+  --color-text-dark: #333333;
+}

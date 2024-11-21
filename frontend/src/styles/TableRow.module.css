@@ -1,14 +1,16 @@
+@import url("palette.css");
+
 .tableHeader {
-  background-color: rgb(48, 48, 48) !important;
-  color: #ececec !important;
+  background-color: var(--color-secondary) !important;
+  color: var(--color-soft-white) !important;
 }
 
 .tableRow {
-  background-color: rgb(126, 126, 126) !important;
+  background-color: var(--color-highlight-2) !important;
 }
 
 .tableTextRow {
-  background-color: rgb(126, 126, 126) !important;
+  background-color: var(--color-highlight-2) !important;
   color: #ececec !important;
 }
 
