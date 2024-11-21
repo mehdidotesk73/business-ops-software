@@ -456,7 +456,7 @@ export function SelfUserView({ id: propId }) {
   // };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <LoadingIndicator />;
   } else {
     console.log("User:", userInfo);
   }

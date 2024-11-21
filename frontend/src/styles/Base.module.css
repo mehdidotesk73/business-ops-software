@@ -1,0 +1,10 @@
+@import url("palette.css");
+
+.darkTheme {
+  background-color: var(--color-bkg);
+}
+
+.navbar {
+  background-color: var(--color-header);
+  color: var(--color-text-light);
+}

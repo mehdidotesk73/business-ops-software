@@ -1,15 +1,18 @@
+@import url("palette.css");
+
 .cardHeader {
-  background-color: rgb(199, 199, 199) !important;
+  background-color: var(--color-header) !important;
   padding: 10px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-width: 2px;
   border-bottom-style: solid;
-  border-color: rgb(255, 255, 255);
+  border-color: var(--color-border);
+  color: var(--color-text-light);
 }
 
 .cardBody {
-  background-color: rgb(105, 105, 105) !important;
-  color: #ffffff !important;
+  background-color: var(--color-body) !important;
+  color: var(--color-text-dark) !important;
   border: 0;
 }

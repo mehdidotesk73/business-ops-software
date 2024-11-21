@@ -1,26 +1,28 @@
 import React from "react";
 import { elementDisplayFields } from "../ElementDisplaySettings";
-import styles from "../../styles/TableRow.module.css";
+import styles from "../../styles/Table.module.css";
 
 function ElementTable({ tableKey = "table", elements, actions = null }) {
   // Get the row-display-settings for element type to be displayed
   const fields = elementDisplayFields[tableKey]?.row || {};
-  // console.log(fields);
-  // console.log(elements);
   // Construct row for each element
   function row(element) {
     return (
-      <tr key={element.id} className={"table-secondary"}>
+      <tr key={element.id}>
         {Object.keys(fields).map((key) => {
           let data = element[key];
           if (fields[key].map) data = fields[key].map(data);
           if (fields[key].prefix) data = fields[key].prefix + data;
           if (fields[key].suffix) data = data + fields[key].suffix;
 
-          return <td key={`${element.id}-${key}`}>{data}</td>;
+          return (
+            <td key={`${element.id}-${key}`} className={styles.tableRow}>
+              {data}
+            </td>
+          );
         })}
         {actions && (
-          <td key={`${element.id}-actions`}>
+          <td key={`${element.id}-actions`} className={styles.tableRow}>
             {actions.map((action, index) => (
               <React.Fragment key={`${element.id}-${index}`}>
                 {index % 4 === 0 && index !== 0 && <div></div>}
@@ -51,15 +53,16 @@ function ElementTable({ tableKey = "table", elements, actions = null }) {
   }
 
   return (
-    <table key={tableKey} className='table'>
+    <table key={tableKey} className={`table ${styles.verticalMargin}`}>
       <thead key={`${tableKey}-thead`}>
         <tr key={`${tableKey}-thead-row`}>
           {Object.keys(fields).map((key) => (
-            <th key={`${tableKey}-${key}`} className={"table-primary"}>
+            <th key={`${tableKey}-${key}`} className={styles.tableHeader}>
               {fields[key].as}
             </th>
           ))}
-          {actions && <th className={"table-primary"}>Actions</th>}
+
+          {actions && <th className={styles.tableHeader}>Actions</th>}
         </tr>
       </thead>
       <tbody key={`${tableKey}-tbody`}>

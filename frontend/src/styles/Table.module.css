@@ -1,0 +1,25 @@
+@import url("palette.css");
+
+.verticalMargin {
+  margin-top: 2.5px;
+  margin-bottom: 2.5px;
+}
+
+.tableHeader {
+  background-color: var(--color-header) !important;
+  color: var(--color-text-light) !important;
+}
+
+.tableRow {
+  background-color: var(--color-body) !important;
+}
+
+.tableTextRow {
+  background-color: var(--color-body) !important;
+  color: #ececec !important;
+}
+
+.buttonContainer {
+  display: inline-block !important;
+  margin: 2px !important;
+}
