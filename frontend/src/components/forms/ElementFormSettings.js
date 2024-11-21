@@ -17,6 +17,7 @@ export const settings = {
       type: "password",
       placeholder: "* Required",
     },
+    horizontalLine: { label: "", type: "hr" },
     firstName: {
       label: "First Name",
       type: "text",
@@ -44,6 +45,7 @@ export const settings = {
       type: "password",
       placeholder: "* Required",
     },
+    horizontalLine: { label: "", type: "hr" },
     firstName: {
       label: "First Name",
       type: "text",

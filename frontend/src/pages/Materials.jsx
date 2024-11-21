@@ -111,11 +111,11 @@ function MaterialsPage() {
   const actions = [
     { label: "View", action: viewModal },
     { label: "Modify", action: modifyModal },
-    {
-      label: "Inspect",
-      action: inspectMaterial,
-      buttonClassName: "btn btn-outline-dark btn-sm",
-    },
+    // {
+    //   label: "Inspect",
+    //   action: inspectMaterial,
+    //   buttonClassName: "btn btn-outline-dark btn-sm",
+    // },
     {
       label: "Delete",
       action: deleteMaterial,
@@ -138,6 +138,7 @@ function MaterialsPage() {
           <BatchCreateElements
             onSubmit={batchCreateMaterial}
             type={"material"}
+            buttonClassName='btn btn-outline-light btn-sm'
           />
         </div>
         {materials.length > 0 && (

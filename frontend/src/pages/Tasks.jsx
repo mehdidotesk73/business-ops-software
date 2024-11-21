@@ -108,11 +108,11 @@ function TasksPage() {
       label: "Modify",
       action: modifyModal,
     },
-    {
-      label: "Inspect",
-      action: inspectTask,
-      buttonClassName: "btn btn-outline-dark btn-sm",
-    },
+    // {
+    //   label: "Inspect",
+    //   action: inspectTask,
+    //   buttonClassName: "btn btn-outline-dark btn-sm",
+    // },
     {
       label: "Delete",
       action: deleteTask,
@@ -132,7 +132,11 @@ function TasksPage() {
             buttonClassName='btn btn-success btn-sm'
           />
           &nbsp;
-          <BatchCreateElements onSubmit={batchCreateTask} type={"task"} />
+          <BatchCreateElements
+            onSubmit={batchCreateTask}
+            type={"task"}
+            buttonClassName='btn btn-outline-light btn-sm'
+          />
         </div>
         {tasks.length > 0 && (
           <ElementTable

@@ -64,7 +64,12 @@ function ModifyModal({
       {showButton}
 
       {showModal && (
-        <div className='modal show d-block' tabIndex='-1' role='dialog'>
+        <div
+          className='modal show d-block'
+          tabIndex='-1'
+          role='dialog'
+          style={{ color: "black" }}
+        >
           <div className='modal-dialog' role='document'>
             <div className='modal-content'>
               <div className='modal-header d-flex justify-content-between align-items-center'>
