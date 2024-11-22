@@ -10,7 +10,7 @@ function Home() {
     >
       <div className='col-md-5 p-lg-3 mx-auto my-3'>
         <img
-          src='/src/assets/logo7.svg'
+          src='/src/assets/logo7.png'
           alt='Launch your business decisions'
           style={{ width: "60%", height: "auto" }}
         />
