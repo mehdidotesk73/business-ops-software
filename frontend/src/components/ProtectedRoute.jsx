@@ -10,7 +10,7 @@ function ProtectedRoute({ children }) {
   console.log("is loading", isLoading);
 
   useEffect(() => {
-    refreshToken().finally(() => setIsLoading(false));
+    refreshToken().then(() => setIsLoading(false));
   }, [refreshToken]);
 
   if (isLoading) {
