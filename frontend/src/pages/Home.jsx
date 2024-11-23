@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import frontPageLogo from "../assets/logo7.svg";
 
 function Home() {
   const navigate = useNavigate();
@@ -10,8 +11,8 @@ function Home() {
     >
       <div className='col-md-5 p-lg-3 mx-auto my-3'>
         <img
-          src='/src/assets/logo7.png'
-          alt='Launch your business decisions'
+          src={frontPageLogo}
+          alt='Launch your business with data'
           style={{ width: "60%", height: "auto" }}
         />
         <h1 className='display-4 font-weight-normal'>
