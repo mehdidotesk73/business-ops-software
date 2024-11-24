@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import frontPageLogo from "../assets/logo7.svg";
+import frontPageLogo from "../assets/logo9.svg";
 
 function Home() {
   const navigate = useNavigate();
